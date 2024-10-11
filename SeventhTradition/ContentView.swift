@@ -10,17 +10,15 @@ import SwiftData
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
+    @Query private var meetings: [Meeting]
 
+    @State private var selectedMeeting: Meeting?
+    
     var body: some View {
         NavigationSplitView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
-                    }
+            List(selection: $selectedMeeting) {
+                ForEach(meetings) { meeting in
+                    NavigationLink(meeting.name, value: meeting)
                 }
                 .onDelete(perform: deleteItems)
             }
@@ -40,21 +38,26 @@ struct ContentView: View {
                 }
             }
         } detail: {
-            Text("Select an item")
+            if let selectedMeeting {
+                MeetingView(meeting: $selectedMeeting)
+            } else {
+                Text("Select a meeting")
+            }
         }
     }
 
     private func addItem() {
         withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
+            let newName = "Friday"
+            let newMeeting = Meeting(name: newName)
+            modelContext.insert(newMeeting)
         }
     }
 
     private func deleteItems(offsets: IndexSet) {
         withAnimation {
             for index in offsets {
-                modelContext.delete(items[index])
+                modelContext.delete(meetings[index])
             }
         }
     }
@@ -62,5 +65,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
+        .modelContainer(for: Meeting.self, inMemory: true)
 }
