@@ -38,7 +38,7 @@ struct ContentView: View {
                 }
             }
         } detail: {
-            if let selectedMeeting {
+            if selectedMeeting != nil {
                 MeetingView(meeting: $selectedMeeting)
             } else {
                 Text("Select a meeting")

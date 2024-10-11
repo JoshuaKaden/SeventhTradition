@@ -48,6 +48,11 @@ struct MeetingView: View {
             .toolbar {
                 if isEditing == true {
                     ToolbarItem {
+                        Button(action: cancelEdits) {
+                            Label("Cancel", systemImage: "arrowshape.backward")
+                        }
+                    }
+                    ToolbarItem {
                         Button(action: saveMeeting) {
                             Label("Save", systemImage: "square.and.arrow.down")
                         }
@@ -63,6 +68,13 @@ struct MeetingView: View {
         } else {
             ContentUnavailableView("No meeting selected", systemImage: "bubble.left.and.exclamationmark.bubble.right")
         }
+    }
+    
+    private func cancelEdits() {
+        if let meeting {
+            name = meeting.name
+        }
+        toggleIsEditing()
     }
     
     private func saveMeeting() {
