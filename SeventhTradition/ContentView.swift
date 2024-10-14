@@ -48,8 +48,7 @@ struct ContentView: View {
 
     private func addItem() {
         withAnimation {
-            let newName = "Friday"
-            let newMeeting = Meeting(name: newName)
+            let newMeeting = Meeting(name: "New Meeting")
             modelContext.insert(newMeeting)
         }
     }

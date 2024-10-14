@@ -30,8 +30,23 @@ struct MeetingView: View {
                             Text("Name")
                                 .font(.footnote)
                             Text(meeting.name)
-                                .padding(.bottom)
                         }
+                        VStack(alignment: .leading) {
+                            Text("Location")
+                                .font(.footnote)
+                            Text(meeting.location)
+                        }
+                    }
+                    
+                    Section {
+                        VStack(alignment: .leading) {
+                            Text("\(meeting.rentIntervalString) Rent")
+                                .font(.footnote)
+                            Text(meeting.rent.formatted(.currency(code: "USD")))
+                        }
+                    }
+                    
+                    Section {
                         VStack(alignment: .leading) {
                             Text("Meeting ID")
                                 .font(.footnote)
@@ -41,6 +56,7 @@ struct MeetingView: View {
                     }
                 }
             }
+            .formStyle(.grouped)
             .task {
                 name = meeting.name
             }
