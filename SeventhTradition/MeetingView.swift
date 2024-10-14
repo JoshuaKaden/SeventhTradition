@@ -20,6 +20,7 @@ struct MeetingView: View {
     @State private var name: String = ""
     @State private var location: String = ""
     @State private var beginningBalance: Double = 0
+    @State private var cashOnHand: Double = 0
     @State private var prudentReserve: Double = 0
     @State private var rent: Double = 0
     @State private var rentIsMonthly: Bool = false
@@ -103,7 +104,7 @@ struct MeetingView: View {
                         VStack(alignment: .leading) {
                             Text("Cash on Hand")
                                 .font(.footnote)
-                            Text(meeting.cashOnHand.formatted(.currency(code: "USD")))
+                            Text(cashOnHand.formatted(.currency(code: "USD")))
                         }
                         VStack(alignment: .leading) {
                             Text("Prudent Reserve")
@@ -113,7 +114,8 @@ struct MeetingView: View {
                         VStack(alignment: .leading) {
                             Text("Treasury Balance")
                                 .font(.footnote)
-                            Text(meeting.treasuryBalance.formatted(.currency(code: "USD")))
+                            let balance = cashOnHand - meeting.prudentReserve
+                            Text(balance.formatted(.currency(code: "USD")))
                         }
                     }
                     
@@ -190,6 +192,12 @@ struct MeetingView: View {
             prudentReserve = meeting.prudentReserve
             rent = meeting.rent
             rentIsMonthly = meeting.rentIsMonthly
+            
+            let rentPaymentsTotal = rentPayments
+                .filter({ $0.meeting == meeting })
+                .map { $0.amount }
+                .reduce(0, +)
+            cashOnHand = beginningBalance - rentPaymentsTotal
         }
     }
     
