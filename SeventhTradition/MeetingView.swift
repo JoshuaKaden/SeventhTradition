@@ -209,6 +209,12 @@ struct MeetingView: View {
             meeting.prudentReserve = prudentReserve
             meeting.rent = rent
             meeting.rentIsMonthly = rentIsMonthly
+            
+            let rentPaymentsTotal = rentPayments
+                .filter({ $0.meeting == meeting })
+                .map { $0.amount }
+                .reduce(0, +)
+            cashOnHand = beginningBalance - rentPaymentsTotal
         }
     }
     
