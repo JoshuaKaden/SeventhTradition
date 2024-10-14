@@ -18,6 +18,7 @@ struct MeetingView: View {
     @State private var name: String = ""
     @State private var location: String = ""
     @State private var rent: Double = 0
+    @State private var rentIsMonthly: Bool = false
     
     private var hasChange: Bool {
         guard let meeting else {
@@ -26,7 +27,8 @@ struct MeetingView: View {
         
         if name != meeting.name ||
             location != meeting.location ||
-            rent != meeting.rent
+            rent != meeting.rent ||
+            rentIsMonthly != meeting.rentIsMonthly
         {
             return true
         }
@@ -48,6 +50,10 @@ struct MeetingView: View {
 #if os(iOS)
                             .keyboardType(.decimalPad)
 #endif
+                        Picker("Frequency", selection: $rentIsMonthly) {
+                            Text("Monthly").tag(true)
+                            Text("Weekly").tag(false)
+                        }
                     }
                 } else {
                     Section {
@@ -80,9 +86,19 @@ struct MeetingView: View {
                             Text(meeting.beginningBalance.formatted(.currency(code: "USD")))
                         }
                         VStack(alignment: .leading) {
+                            Text("Cash on Hand")
+                                .font(.footnote)
+                            Text(meeting.cashOnHand.formatted(.currency(code: "USD")))
+                        }
+                        VStack(alignment: .leading) {
                             Text("Prudent Reserve")
                                 .font(.footnote)
                             Text(meeting.prudentReserve.formatted(.currency(code: "USD")))
+                        }
+                        VStack(alignment: .leading) {
+                            Text("Treasury Balance")
+                                .font(.footnote)
+                            Text(meeting.treasuryBalance.formatted(.currency(code: "USD")))
                         }
                     }
                     
@@ -132,6 +148,7 @@ struct MeetingView: View {
             name = meeting.name
             location = meeting.location
             rent = meeting.rent
+            rentIsMonthly = meeting.rentIsMonthly
         }
     }
     
@@ -140,6 +157,7 @@ struct MeetingView: View {
             meeting.name = name
             meeting.location = location
             meeting.rent = rent
+            meeting.rentIsMonthly = rentIsMonthly
         }
     }
     
