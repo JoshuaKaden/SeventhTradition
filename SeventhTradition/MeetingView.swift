@@ -16,6 +16,22 @@ struct MeetingView: View {
     
     @State private var isEditing: Bool = false
     @State private var name: String = ""
+    @State private var location: String = ""
+    @State private var rent: Double = 0
+    
+    private var hasChange: Bool {
+        guard let meeting else {
+            return false
+        }
+        
+        if name != meeting.name ||
+            location != meeting.location ||
+            rent != meeting.rent
+        {
+            return true
+        }
+        return false
+    }
     
     var body: some View {
         if let meeting {
@@ -24,6 +40,15 @@ struct MeetingView: View {
                     Section("Name") {
                         TextField(text: $name, label: {})
                     }
+                    Section("Location") {
+                        TextField(text: $location, label: {})
+                    }
+                    Section("Rent") {
+                        TextField("", value: $rent, format: .number)
+#if os(iOS)
+                            .keyboardType(.decimalPad)
+#endif
+                    }
                 } else {
                     Section {
                         VStack(alignment: .leading) {
@@ -31,10 +56,12 @@ struct MeetingView: View {
                                 .font(.footnote)
                             Text(meeting.name)
                         }
-                        VStack(alignment: .leading) {
-                            Text("Location")
-                                .font(.footnote)
-                            Text(meeting.location)
+                        if !meeting.location.isEmpty {
+                            VStack(alignment: .leading) {
+                                Text("Location")
+                                    .font(.footnote)
+                                Text(meeting.location)
+                            }
                         }
                     }
                     
@@ -43,6 +70,19 @@ struct MeetingView: View {
                             Text("\(meeting.rentIntervalString) Rent")
                                 .font(.footnote)
                             Text(meeting.rent.formatted(.currency(code: "USD")))
+                        }
+                    }
+                    
+                    Section {
+                        VStack(alignment: .leading) {
+                            Text("Beginning Balance")
+                                .font(.footnote)
+                            Text(meeting.beginningBalance.formatted(.currency(code: "USD")))
+                        }
+                        VStack(alignment: .leading) {
+                            Text("Prudent Reserve")
+                                .font(.footnote)
+                            Text(meeting.prudentReserve.formatted(.currency(code: "USD")))
                         }
                     }
                     
@@ -58,7 +98,7 @@ struct MeetingView: View {
             }
             .formStyle(.grouped)
             .task {
-                name = meeting.name
+                assignFromMeeting()
             }
             .animation(nil, value: isEditing)
             .toolbar {
@@ -72,7 +112,7 @@ struct MeetingView: View {
                         Button(action: saveMeeting) {
                             Text("Save")
                         }
-                        .disabled(meeting.name == name)
+                        .disabled(!hasChange)
                     }
                 } else {
                     ToolbarItem {
@@ -87,19 +127,33 @@ struct MeetingView: View {
         }
     }
     
-    private func cancelEdits() {
+    private func assignFromMeeting() {
         if let meeting {
             name = meeting.name
+            location = meeting.location
+            rent = meeting.rent
         }
-        toggleIsEditing()
+    }
+    
+    private func assignToMeeting() {
+        if let meeting {
+            meeting.name = name
+            meeting.location = location
+            meeting.rent = rent
+        }
+    }
+    
+    private func cancelEdits() {
+        withAnimation {
+            assignFromMeeting()
+            isEditing = false
+        }
     }
     
     private func saveMeeting() {
-        if let meeting {
-            withAnimation {
-                meeting.name = name
-                isEditing = false
-            }
+        withAnimation {
+            assignToMeeting()
+            isEditing = false
         }
     }
     
