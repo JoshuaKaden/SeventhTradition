@@ -49,18 +49,19 @@ struct MeetingView: View {
                 if isEditing == true {
                     ToolbarItem {
                         Button(action: cancelEdits) {
-                            Label("Cancel", systemImage: "arrowshape.backward")
+                            Text("Cancel")
                         }
                     }
                     ToolbarItem {
                         Button(action: saveMeeting) {
-                            Label("Save", systemImage: "square.and.arrow.down")
+                            Text("Save")
                         }
+                        .disabled(meeting.name == name)
                     }
                 } else {
                     ToolbarItem {
                         Button(action: toggleIsEditing) {
-                            Label("Edit", systemImage: "square.and.pencil")
+                            Text("Edit")
                         }
                     }
                 }
