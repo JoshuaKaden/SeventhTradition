@@ -38,10 +38,12 @@ struct ContentView: View {
                 }
             }
         } detail: {
-            if selectedMeeting != nil {
-                MeetingView(meeting: $selectedMeeting)
-            } else {
-                Text("Select a meeting")
+            NavigationStack {
+                if selectedMeeting != nil {
+                    MeetingView(meeting: $selectedMeeting)
+                } else {
+                    Text("Select a meeting")
+                }
             }
         }
     }

@@ -5,18 +5,22 @@
 //  Created by Joshua Kaden on 10/11/24.
 //
 
+import SwiftData
 import SwiftUI
 
 struct MeetingView: View {
     
     @Binding var meeting: Meeting?
     
-    @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
-    
+
+    @Query(sort: \RentPayment.date, order: .reverse) private var rentPayments: [RentPayment]
+
     @State private var isEditing: Bool = false
     @State private var name: String = ""
     @State private var location: String = ""
+    @State private var beginningBalance: Double = 0
+    @State private var prudentReserve: Double = 0
     @State private var rent: Double = 0
     @State private var rentIsMonthly: Bool = false
     
@@ -27,6 +31,8 @@ struct MeetingView: View {
         
         if name != meeting.name ||
             location != meeting.location ||
+            beginningBalance != meeting.beginningBalance ||
+            prudentReserve != meeting.prudentReserve ||
             rent != meeting.rent ||
             rentIsMonthly != meeting.rentIsMonthly
         {
@@ -39,12 +45,15 @@ struct MeetingView: View {
         if let meeting {
             Form {
                 if isEditing == true {
+                    
                     Section("Name") {
                         TextField(text: $name, label: {})
                     }
+                    
                     Section("Location") {
                         TextField(text: $location, label: {})
                     }
+                    
                     Section("Rent") {
                         TextField("", value: $rent, format: .number)
 #if os(iOS)
@@ -54,6 +63,20 @@ struct MeetingView: View {
                             Text("Monthly").tag(true)
                             Text("Weekly").tag(false)
                         }
+                    }
+                    
+                    Section("Beginning Balance") {
+                        TextField("", value: $beginningBalance, format: .number)
+#if os(iOS)
+                            .keyboardType(.decimalPad)
+#endif
+                    }
+                    
+                    Section("Prudent Reserve") {
+                        TextField("", value: $prudentReserve, format: .number)
+#if os(iOS)
+                            .keyboardType(.decimalPad)
+#endif
                     }
                 } else {
                     Section {
@@ -68,14 +91,6 @@ struct MeetingView: View {
                                     .font(.footnote)
                                 Text(meeting.location)
                             }
-                        }
-                    }
-                    
-                    Section {
-                        VStack(alignment: .leading) {
-                            Text("\(meeting.rentIntervalString) Rent")
-                                .font(.footnote)
-                            Text(meeting.rent.formatted(.currency(code: "USD")))
                         }
                     }
                     
@@ -99,6 +114,30 @@ struct MeetingView: View {
                             Text("Treasury Balance")
                                 .font(.footnote)
                             Text(meeting.treasuryBalance.formatted(.currency(code: "USD")))
+                        }
+                    }
+                    
+                    Section {
+                        VStack(alignment: .leading) {
+                            Text("\(meeting.rentIntervalString) Rent")
+                                .font(.footnote)
+                            Text(meeting.rent.formatted(.currency(code: "USD")))
+                        }
+                        NavigationLink(destination: RentPaymentsView(meeting: $meeting)) {
+                            VStack(alignment: .leading) {
+                                Text("Rent Payments")
+                                let rentPayments = rentPayments.filter({ $0.meeting == meeting })
+                                if let rentPayment = rentPayments.first {
+                                    HStack {
+                                        Text("Most Recent")
+                                            .font(.footnote)
+                                        Text(rentPayment.date.formatted(date: .abbreviated, time: .omitted))
+                                            .font(.footnote)
+                                        Text(rentPayment.amount.formatted(.currency(code: "USD")))
+                                            .font(.footnote)
+                                    }
+                                }
+                            }
                         }
                     }
                     
@@ -147,6 +186,8 @@ struct MeetingView: View {
         if let meeting {
             name = meeting.name
             location = meeting.location
+            beginningBalance = meeting.beginningBalance
+            prudentReserve = meeting.prudentReserve
             rent = meeting.rent
             rentIsMonthly = meeting.rentIsMonthly
         }
@@ -156,6 +197,8 @@ struct MeetingView: View {
         if let meeting {
             meeting.name = name
             meeting.location = location
+            meeting.beginningBalance = beginningBalance
+            meeting.prudentReserve = prudentReserve
             meeting.rent = rent
             meeting.rentIsMonthly = rentIsMonthly
         }

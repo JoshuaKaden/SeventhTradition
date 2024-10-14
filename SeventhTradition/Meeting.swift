@@ -20,6 +20,8 @@ final class Meeting {
     var rentIsMonthly: Bool
     var treasuryBalance: Double
     
+    @Relationship(inverse: \RentPayment.meeting) var rentPayments: [RentPayment]? = []
+    
     var rentIntervalString: String {
         if rentIsMonthly {
             return "Monthly"
