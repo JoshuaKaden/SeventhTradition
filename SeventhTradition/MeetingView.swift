@@ -14,6 +14,8 @@ struct MeetingView: View {
     
     @Environment(\.modelContext) private var modelContext
 
+    @Query(sort: \Collection.date, order: .reverse) private var collections: [Collection]
+    @Query(sort: \OtherIncome.date, order: .reverse) private var otherIncomes: [OtherIncome]
     @Query(sort: \RentPayment.date, order: .reverse) private var rentPayments: [RentPayment]
 
     @State private var isEditing: Bool = false
@@ -54,7 +56,7 @@ struct MeetingView: View {
                     Section("Location") {
                         TextField(text: $location, label: {})
                     }
-                    
+                                        
                     Section("Rent") {
                         TextField("", value: $rent, format: .number)
 #if os(iOS)
@@ -93,14 +95,14 @@ struct MeetingView: View {
                                 Text(meeting.location)
                             }
                         }
-                    }
-                    
-                    Section {
                         VStack(alignment: .leading) {
                             Text("Beginning Balance")
                                 .font(.footnote)
                             Text(meeting.beginningBalance.formatted(.currency(code: "USD")))
                         }
+                    }
+                    
+                    Section {
                         VStack(alignment: .leading) {
                             Text("Cash on Hand")
                                 .font(.footnote)
@@ -116,6 +118,28 @@ struct MeetingView: View {
                                 .font(.footnote)
                             let balance = cashOnHand - meeting.prudentReserve
                             Text(balance.formatted(.currency(code: "USD")))
+                        }
+                    }
+                    
+                    Section {
+                        NavigationLink(destination: CollectionsView(meeting: $meeting)) {
+                            VStack(alignment: .leading) {
+                                Text("Collections")
+                                let collections = collections.filter({ $0.meeting == meeting })
+                                if let collection = collections.first {
+                                    HStack {
+                                        Text("Most Recent")
+                                            .font(.footnote)
+                                        Text(collection.date.formatted(date: .abbreviated, time: .omitted))
+                                            .font(.footnote)
+                                        Text(collection.amount.formatted(.currency(code: "USD")))
+                                            .font(.footnote)
+                                    }
+                                }
+                            }
+                        }
+                        NavigationLink(destination: OtherIncomesView(meeting: $meeting)) {
+                            Text("Other Income")
                         }
                     }
                     
@@ -193,11 +217,7 @@ struct MeetingView: View {
             rent = meeting.rent
             rentIsMonthly = meeting.rentIsMonthly
             
-            let rentPaymentsTotal = rentPayments
-                .filter({ $0.meeting == meeting })
-                .map { $0.amount }
-                .reduce(0, +)
-            cashOnHand = beginningBalance - rentPaymentsTotal
+            updateSummaries()
         }
     }
     
@@ -210,11 +230,7 @@ struct MeetingView: View {
             meeting.rent = rent
             meeting.rentIsMonthly = rentIsMonthly
             
-            let rentPaymentsTotal = rentPayments
-                .filter({ $0.meeting == meeting })
-                .map { $0.amount }
-                .reduce(0, +)
-            cashOnHand = beginningBalance - rentPaymentsTotal
+            updateSummaries()
         }
     }
     
@@ -230,11 +246,34 @@ struct MeetingView: View {
             assignToMeeting()
             isEditing = false
         }
+        try? modelContext.save()
     }
     
     private func toggleIsEditing() {
         withAnimation {
             isEditing.toggle()
         }
+    }
+    
+    private func updateSummaries() {
+        let collectionsTotal = collections
+            .filter({ $0.meeting == meeting })
+            .map { $0.amount }
+            .reduce(0, +)
+        
+        let otherIncomeTotal = otherIncomes
+            .filter({ $0.meeting == meeting })
+            .map { $0.amount }
+            .reduce(0, +)
+
+        let rentPaymentsTotal = rentPayments
+            .filter({ $0.meeting == meeting })
+            .map { $0.amount }
+            .reduce(0, +)
+        
+        let got = collectionsTotal + otherIncomeTotal
+        let spent = rentPaymentsTotal
+        
+        cashOnHand = beginningBalance + got - spent
     }
 }

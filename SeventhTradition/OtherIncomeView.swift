@@ -1,5 +1,5 @@
 //
-//  RentPaymentView.swift
+//  OtherIncomeView.swift
 //  SeventhTradition
 //
 //  Created by Joshua Kaden on 10/14/24.
@@ -8,26 +8,24 @@
 import SwiftData
 import SwiftUI
 
-struct RentPaymentView: View {
+struct OtherIncomeView: View {
     
-    @State var rentPayment: RentPayment?
+    @State var otherIncome: OtherIncome?
     
     @Environment(\.modelContext) private var modelContext
-
+    
     @State private var isEditing: Bool = false
     @State private var amount: Double = 0
     @State private var date: Date = Date()
-    @State private var method: String = ""
-    @State private var who: String = ""
+    @State private var info: String = ""
     
     private var hasChange: Bool {
-        guard let rentPayment else {
+        guard let otherIncome else {
             return false
         }
-        if amount != rentPayment.amount ||
-            date != rentPayment.date ||
-            method != rentPayment.method ||
-            who != rentPayment.who
+        if amount != otherIncome.amount ||
+            date != otherIncome.date ||
+            info != otherIncome.info
         {
             return true
         }
@@ -35,41 +33,39 @@ struct RentPaymentView: View {
     }
     
     var body: some View {
-        if rentPayment == nil {
-            ContentUnavailableView("No rent payment selected", systemImage: "bubble.left.and.exclamationmark.bubble.right")
-        } else if let rentPayment {
+        if otherIncome == nil {
+            ContentUnavailableView("No income selected", systemImage: "bubble.left.and.exclamationmark.bubble.right")
+        } else if let otherIncome {
             Form {
                 if isEditing {
-                    Section("Date") {
-                        DatePicker("", selection: $date)
-                    }
                     Section("Amount") {
                         TextField("", value: $amount, format: .number)
 #if os(iOS)
                             .keyboardType(.decimalPad)
 #endif
                     }
+                    Section("Date") {
+                        DatePicker("", selection: $date)
+                    }
+                    Section("Info") {
+                        TextField("", text: $info)
+                    }
                 } else {
                     Section {
                         VStack(alignment: .leading) {
                             Text("Date")
                                 .font(.footnote)
-                            Text(rentPayment.date.formatted())
+                            Text(otherIncome.date.formatted())
                         }
                         VStack(alignment: .leading) {
                             Text("Amount")
                                 .font(.footnote)
-                            Text(rentPayment.amount.formatted(.currency(code: "USD")))
+                            Text(otherIncome.amount.formatted(.currency(code: "USD")))
                         }
                         VStack(alignment: .leading) {
-                            Text("Method")
+                            Text("Info")
                                 .font(.footnote)
-                            Text(rentPayment.method)
-                        }
-                        VStack(alignment: .leading) {
-                            Text("Who")
-                                .font(.footnote)
-                            Text(rentPayment.who)
+                            Text(otherIncome.info)
                         }
                     }
                 }
@@ -104,20 +100,18 @@ struct RentPaymentView: View {
     }
     
     private func assignFromModel() {
-        if let rentPayment {
-            amount = rentPayment.amount
-            date = rentPayment.date
-            method = rentPayment.method
-            who = rentPayment.who
+        if let otherIncome {
+            amount = otherIncome.amount
+            date = otherIncome.date
+            info = otherIncome.info
         }
     }
     
     private func assignToModel() {
-        if let rentPayment {
-            rentPayment.amount = amount
-            rentPayment.date = date
-            rentPayment.method = method
-            rentPayment.who = who
+        if let otherIncome {
+            otherIncome.amount = amount
+            otherIncome.date = date
+            otherIncome.info = info
         }
     }
     
