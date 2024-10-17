@@ -15,6 +15,7 @@ struct MeetingView: View {
     @Environment(\.modelContext) private var modelContext
 
     @Query(sort: \Collection.date, order: .reverse) private var collections: [Collection]
+    @Query(sort: \GroupConsciencePayment.date, order: .reverse) private var groupConsciencePayments: [GroupConsciencePayment]
     @Query(sort: \OtherIncome.date, order: .reverse) private var otherIncomes: [OtherIncome]
     @Query(sort: \RentPayment.date, order: .reverse) private var rentPayments: [RentPayment]
 
@@ -167,6 +168,26 @@ struct MeetingView: View {
                         }
                     }
                     
+                    Section("Group Conscience") {
+                        NavigationLink(destination: GroupConsciencePaymentsView(meeting: $meeting)) {
+                            Text("Payments")
+                            let payments = groupConsciencePayments.filter({ $0.meeting == meeting })
+                            if let payment = payments.first {
+                                HStack {
+                                    Text("Most Recent")
+                                        .font(.footnote)
+                                    Text(payment.date.formatted(date: .abbreviated, time: .omitted))
+                                        .font(.footnote)
+                                    Text(payment.amount.formatted(.currency(code: "USD")))
+                                        .font(.footnote)
+                                }
+                            }
+                        }
+                        NavigationLink(destination: GroupConscienceGoalsView(meeting: $meeting)) {
+                            Text("Goals")
+                        }
+                    }
+                    
                     Section {
                         VStack(alignment: .leading) {
                             Text("Meeting ID")
@@ -261,6 +282,11 @@ struct MeetingView: View {
             .map { $0.amount }
             .reduce(0, +)
         
+        let groupConscienceTotal = groupConsciencePayments
+            .filter({ $0.meeting == meeting })
+            .map { $0.amount }
+            .reduce(0, +)
+        
         let otherIncomeTotal = otherIncomes
             .filter({ $0.meeting == meeting })
             .map { $0.amount }
@@ -272,7 +298,7 @@ struct MeetingView: View {
             .reduce(0, +)
         
         let got = collectionsTotal + otherIncomeTotal
-        let spent = rentPaymentsTotal
+        let spent = rentPaymentsTotal + groupConscienceTotal
         
         cashOnHand = beginningBalance + got - spent
     }

@@ -17,15 +17,17 @@ struct GroupConsciencePaymentView: View {
     @State private var isEditing: Bool = false
     @State private var amount: Double = 0
     @State private var date: Date = Date()
-    @State private var info: String = ""
-    
+    @State private var method: String = ""
+    @State private var who: String = ""
+
     private var hasChange: Bool {
         guard let payment else {
             return false
         }
-        if amount != otherIncome.amount ||
-            date != otherIncome.date ||
-            info != otherIncome.info
+        if amount != payment.amount ||
+            date != payment.date ||
+            method != payment.method ||
+            who != payment.who
         {
             return true
         }
@@ -47,8 +49,11 @@ struct GroupConsciencePaymentView: View {
                     Section("Date") {
                         DatePicker("", selection: $date)
                     }
-                    Section("Info") {
-                        TextField("", text: $info)
+                    Section("Method") {
+                        TextField("", text: $method)
+                    }
+                    Section("Who") {
+                        TextField("", text: $who)
                     }
                 } else {
                     Section {
@@ -63,9 +68,14 @@ struct GroupConsciencePaymentView: View {
                             Text(payment.amount.formatted(.currency(code: "USD")))
                         }
                         VStack(alignment: .leading) {
-                            Text("Info")
+                            Text("Method")
                                 .font(.footnote)
-                            Text(payment.info)
+                            Text(payment.method)
+                        }
+                        VStack(alignment: .leading) {
+                            Text("Who")
+                                .font(.footnote)
+                            Text(payment.who)
                         }
                     }
                 }
@@ -101,17 +111,19 @@ struct GroupConsciencePaymentView: View {
     
     private func assignFromModel() {
         if let payment {
-            amount = otherIncome.amount
-            date = otherIncome.date
-            info = otherIncome.info
+            amount = payment.amount
+            date = payment.date
+            method = payment.method
+            who = payment.who
         }
     }
     
     private func assignToModel() {
         if let payment {
-            otherIncome.amount = amount
-            otherIncome.date = date
-            otherIncome.info = info
+            payment.amount = amount
+            payment.date = date
+            payment.method = method
+            payment.who = who
         }
     }
     

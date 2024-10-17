@@ -49,6 +49,12 @@ struct RentPaymentView: View {
                             .keyboardType(.decimalPad)
 #endif
                     }
+                    Section("Method") {
+                        TextField("", text: $method)
+                    }
+                    Section("Who") {
+                        TextField("", text: $who)
+                    }
                 } else {
                     Section {
                         VStack(alignment: .leading) {

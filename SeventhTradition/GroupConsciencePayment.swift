@@ -12,16 +12,15 @@ import SwiftData
 final class GroupConsciencePayment {
     var amount: Double
     var date: Date
-    var info: String
     var method: String
     var who: String
     
     var goal: GroupConscienceGoal?
+    var meeting: Meeting?
     
-    init(amount: Double, date: Date, info: String, method: String, who: String, goal: GroupConscienceGoal? = nil) {
+    init(amount: Double, date: Date, method: String, who: String, goal: GroupConscienceGoal? = nil) {
         self.amount = amount
         self.date = date
-        self.info = info
         self.method = method
         self.who = who
         self.goal = goal

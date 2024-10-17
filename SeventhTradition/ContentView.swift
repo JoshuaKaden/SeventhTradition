@@ -58,7 +58,29 @@ struct ContentView: View {
     private func deleteItems(offsets: IndexSet) {
         withAnimation {
             for index in offsets {
-                modelContext.delete(meetings[index])
+                let meeting = meetings[index]
+                
+                for item in meeting.collections ?? [] {
+                    modelContext.delete(item)
+                }
+
+                for item in meeting.groupConscienceGoals ?? [] {
+                    modelContext.delete(item)
+                }
+
+                for item in meeting.groupConsciencePayments ?? [] {
+                    modelContext.delete(item)
+                }
+
+                for item in meeting.otherIncome ?? [] {
+                    modelContext.delete(item)
+                }
+
+                for item in meeting.rentPayments ?? [] {
+                    modelContext.delete(item)
+                }
+
+                modelContext.delete(meeting)
             }
         }
     }

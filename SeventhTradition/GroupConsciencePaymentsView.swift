@@ -48,19 +48,19 @@ struct GroupConsciencePaymentsView: View {
     
     private func addItem() {
         withAnimation {
-            let new = GroupConscience(amount: 0, date: Date(), info: "", method: "", who: "")
+            let new = GroupConsciencePayment(amount: 0, date: Date(), method: "", who: "")
             modelContext.insert(new)
-            meeting?.groupConscience?.append(new)
+            meeting?.groupConsciencePayments?.append(new)
             new.meeting = meeting
         }
         try? modelContext.save()
     }
     
     private func deleteItems(offsets: IndexSet) {
-        let groupConsciences = groupConsciences.filter({ $0.meeting == meeting })
+        let payments = groupConsciencePayments.filter({ $0.meeting == meeting })
         withAnimation {
             for index in offsets {
-                modelContext.delete(groupConsciences[index])
+                modelContext.delete(payments[index])
             }
         }
         try? modelContext.save()
