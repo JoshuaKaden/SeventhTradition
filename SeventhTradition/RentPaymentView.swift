@@ -12,6 +12,7 @@ struct RentPaymentView: View {
     
     @State var rentPayment: RentPayment?
     
+    @Environment(\.locale) private var locale
     @Environment(\.modelContext) private var modelContext
 
     @State private var isEditing: Bool = false
@@ -65,7 +66,7 @@ struct RentPaymentView: View {
                         VStack(alignment: .leading) {
                             Text("Amount")
                                 .font(.footnote)
-                            Text(rentPayment.amount.formatted(.currency(code: "USD")))
+                            Text(rentPayment.amount.formatted(.currency(code: locale.currency?.identifier ?? "USD")))
                         }
                         VStack(alignment: .leading) {
                             Text("Method")

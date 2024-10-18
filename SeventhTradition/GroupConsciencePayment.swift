@@ -13,16 +13,17 @@ final class GroupConsciencePayment {
     var amount: Double
     var date: Date
     var method: String
+    var type: String
     var who: String
     
-    var goal: GroupConscienceGoal?
     var meeting: Meeting?
     
-    init(amount: Double, date: Date, method: String, who: String, goal: GroupConscienceGoal? = nil) {
+    init(amount: Double, date: Date, method: String, type: String, who: String, meeting: Meeting? = nil) {
         self.amount = amount
         self.date = date
         self.method = method
+        self.type = type
         self.who = who
-        self.goal = goal
+        self.meeting = meeting
     }
 }

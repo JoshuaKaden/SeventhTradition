@@ -12,9 +12,10 @@ struct GroupConscienceGoalsView: View {
     
     @Binding var meeting: Meeting?
     
+    @Environment(\.locale) private var locale
     @Environment(\.modelContext) private var modelContext
     
-    @Query(sort: \GroupConscienceGoal.date, order: .reverse) private var groupConscienceGoals: [GroupConscienceGoal]
+    @Query(sort: \GroupConscienceGoal.type) private var groupConscienceGoals: [GroupConscienceGoal]
     
     @State private var selectedGroupConscienceGoal: GroupConscienceGoal?
     
@@ -23,15 +24,19 @@ struct GroupConscienceGoalsView: View {
             ForEach(groupConscienceGoals.filter({ $0.meeting == meeting })) { goal in
                 NavigationLink(destination: GroupConscienceGoalView(goal: goal)) {
                     HStack {
-                        Text(goal.date.formatted(date: .abbreviated, time: .omitted))
+                        Text(goal.type)
                         Spacer()
-                        Text(goal.amount.formatted(.currency(code: "USD")))
+                        if goal.isPercent {
+                            Text(goal.percent.formatted(.percent))
+                        } else {
+                            Text(goal.amount.formatted(.currency(code: locale.currency?.identifier ?? "USD")))
+                        }
                     }
                 }
             }
             .onDelete(perform: deleteItems)
         }
-        .navigationTitle("Group Conscience")
+        .navigationTitle("GC Goals")
         .toolbar {
 #if os(iOS)
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -48,7 +53,8 @@ struct GroupConscienceGoalsView: View {
     
     private func addItem() {
         withAnimation {
-            let new = GroupConscienceGoal(amount: 0, date: Date(), info: "", method: "", who: "")
+            let new = GroupConscienceGoal(amount: 0, date: Date(), isPercent: false, percent: 0, type: "")
+            new.type = "New Goal"
             modelContext.insert(new)
             meeting?.groupConscienceGoals?.append(new)
             new.meeting = meeting

@@ -12,6 +12,7 @@ struct OtherIncomesView: View {
     
     @Binding var meeting: Meeting?
     
+    @Environment(\.locale) private var locale
     @Environment(\.modelContext) private var modelContext
     
     @Query(sort: \OtherIncome.date, order: .reverse) private var otherIncomes: [OtherIncome]
@@ -25,7 +26,7 @@ struct OtherIncomesView: View {
                     HStack {
                         Text(otherIncome.date.formatted(date: .abbreviated, time: .omitted))
                         Spacer()
-                        Text(otherIncome.amount.formatted(.currency(code: "USD")))
+                        Text(otherIncome.amount.formatted(.currency(code: locale.currency?.identifier ?? "USD")))
                     }
                 }
             }

@@ -10,22 +10,56 @@ import SwiftUI
 
 struct GroupConscienceGoalView: View {
     
-    @State var otherIncome: OtherIncome?
+    @State var goal: GroupConscienceGoal?
     
+    @Environment(\.locale) private var locale
     @Environment(\.modelContext) private var modelContext
     
     @State private var isEditing: Bool = false
     @State private var amount: Double = 0
     @State private var date: Date = Date()
-    @State private var info: String = ""
+    @State private var isPercent: Bool = false
+    @State private var percentInt: Double = 0
+    @State private var type: String = ""
+    
+    @State private var typeTemplate: GoalType = .none
+    
+    private enum GoalType {
+        case
+        local,
+        area,
+        intragroup,
+        gsb,
+        gsr,
+        none
+        
+        var name: String {
+            switch self {
+            case .local:
+                "Local District"
+            case .area:
+                "Area Committee"
+            case.intragroup:
+                "Local Intragroup or Central Office"
+            case .gsb:
+                "General Service Board"
+            case .gsr:
+                "GS Representative travel"
+            case .none:
+                "optionally, pick a template name"
+            }
+        }
+    }
     
     private var hasChange: Bool {
-        guard let otherIncome else {
+        guard let goal else {
             return false
         }
-        if amount != otherIncome.amount ||
-            date != otherIncome.date ||
-            info != otherIncome.info
+        if amount != goal.amount ||
+            date != goal.date ||
+            isPercent != goal.isPercent ||
+            percentInt != goal.percent * 100 ||
+            type != goal.type
         {
             return true
         }
@@ -33,39 +67,67 @@ struct GroupConscienceGoalView: View {
     }
     
     var body: some View {
-        if otherIncome == nil {
-            ContentUnavailableView("No income selected", systemImage: "bubble.left.and.exclamationmark.bubble.right")
-        } else if let otherIncome {
+        if goal == nil {
+            ContentUnavailableView("No goal selected", systemImage: "bubble.left.and.exclamationmark.bubble.right")
+        } else if let goal {
             Form {
                 if isEditing {
-                    Section("Amount") {
-                        TextField("", value: $amount, format: .number)
+                    Section("Type") {
+                        Picker("Template", selection: $typeTemplate) {
+                            Text(GoalType.local.name).tag(GoalType.local)
+                            Text(GoalType.area.name).tag(GoalType.area)
+                            Text(GoalType.intragroup.name).tag(GoalType.intragroup)
+                            Text(GoalType.gsb.name).tag(GoalType.gsb)
+                            Text(GoalType.gsr.name).tag(GoalType.gsr)
+                            Text(GoalType.none.name).tag(GoalType.none)
+                        }
+                        TextField("", text: $type)
+                    }
+                    Section("Is Percent") {
+                        Toggle("", isOn: $isPercent)
+                    }
+                    if isPercent {
+                        Section("Percent") {
+                            TextField("", value: $percentInt, format: .number)
 #if os(iOS)
-                            .keyboardType(.decimalPad)
+                                .keyboardType(.decimalPad)
 #endif
+                        }
+                    } else {
+                        Section("Amount") {
+                            TextField("", value: $amount, format: .number)
+#if os(iOS)
+                                .keyboardType(.decimalPad)
+#endif
+                        }
                     }
                     Section("Date") {
                         DatePicker("", selection: $date)
                     }
-                    Section("Info") {
-                        TextField("", text: $info)
-                    }
                 } else {
                     Section {
                         VStack(alignment: .leading) {
+                            Text("Type")
+                                .font(.footnote)
+                            Text(goal.type)
+                        }
+                        if goal.isPercent {
+                            VStack(alignment: .leading) {
+                                Text(goal.percent.formatted(.percent))
+                                Text("Of Treasury Balance")
+                                    .font(.footnote)
+                            }
+                        } else {
+                            VStack(alignment: .leading) {
+                                Text("Amount")
+                                    .font(.footnote)
+                                Text(goal.amount.formatted(.currency(code: locale.currency?.identifier ?? "USD")))
+                            }
+                        }
+                        VStack(alignment: .leading) {
                             Text("Date")
                                 .font(.footnote)
-                            Text(otherIncome.date.formatted())
-                        }
-                        VStack(alignment: .leading) {
-                            Text("Amount")
-                                .font(.footnote)
-                            Text(otherIncome.amount.formatted(.currency(code: "USD")))
-                        }
-                        VStack(alignment: .leading) {
-                            Text("Info")
-                                .font(.footnote)
-                            Text(otherIncome.info)
+                            Text(goal.date.formatted())
                         }
                     }
                 }
@@ -75,6 +137,9 @@ struct GroupConscienceGoalView: View {
                 assignFromModel()
             }
             .animation(nil, value: isEditing)
+            .onChange(of: typeTemplate, { oldValue, newValue in
+                type = newValue.name
+            })
             .toolbar {
                 if isEditing == true {
                     ToolbarItem {
@@ -100,18 +165,22 @@ struct GroupConscienceGoalView: View {
     }
     
     private func assignFromModel() {
-        if let otherIncome {
-            amount = otherIncome.amount
-            date = otherIncome.date
-            info = otherIncome.info
+        if let goal {
+            amount = goal.amount
+            date = goal.date
+            isPercent = goal.isPercent
+            percentInt = goal.percent * 100
+            type = goal.type
         }
     }
     
     private func assignToModel() {
-        if let otherIncome {
-            otherIncome.amount = amount
-            otherIncome.date = date
-            otherIncome.info = info
+        if let goal {
+            goal.amount = amount
+            goal.date = date
+            goal.isPercent = isPercent
+            goal.percent = percentInt / 100
+            goal.type = type
         }
     }
     

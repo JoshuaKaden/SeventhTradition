@@ -50,7 +50,7 @@ struct ContentView: View {
 
     private func addItem() {
         withAnimation {
-            let newMeeting = Meeting(name: "New Meeting")
+            let newMeeting = Meeting(id: UUID(), name: "New Meeting")
             modelContext.insert(newMeeting)
         }
     }
