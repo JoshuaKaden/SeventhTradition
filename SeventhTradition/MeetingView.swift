@@ -12,7 +12,7 @@ struct MeetingView: View {
     
     @Binding var meeting: Meeting?
     
-    @Environment(\.locale) private var locale
+    @Environment(\.currencyCode) private var currencyCode
     @Environment(\.modelContext) private var modelContext
 
     @Query(sort: \Collection.date, order: .reverse) private var collections: [Collection]
@@ -100,7 +100,7 @@ struct MeetingView: View {
                         VStack(alignment: .leading) {
                             Text("Beginning Balance")
                                 .font(.footnote)
-                            Text(meeting.beginningBalance.formatted(.currency(code: locale.currency?.identifier ?? "USD")))
+                            Text(meeting.beginningBalance.formatted(.currency(code: currencyCode)))
                         }
                     }
                     
@@ -108,18 +108,18 @@ struct MeetingView: View {
                         VStack(alignment: .leading) {
                             Text("Cash on Hand")
                                 .font(.footnote)
-                            Text(cashOnHand.formatted(.currency(code: locale.currency?.identifier ?? "USD")))
+                            Text(cashOnHand.formatted(.currency(code: currencyCode)))
                         }
                         VStack(alignment: .leading) {
                             Text("Prudent Reserve")
                                 .font(.footnote)
-                            Text(meeting.prudentReserve.formatted(.currency(code: locale.currency?.identifier ?? "USD")))
+                            Text(meeting.prudentReserve.formatted(.currency(code: currencyCode)))
                         }
                         VStack(alignment: .leading) {
                             Text("Treasury Balance")
                                 .font(.footnote)
                             let balance = cashOnHand - meeting.prudentReserve
-                            Text(balance.formatted(.currency(code: locale.currency?.identifier ?? "USD")))
+                            Text(balance.formatted(.currency(code: currencyCode)))
                         }
                     }
                     
@@ -134,7 +134,7 @@ struct MeetingView: View {
                                             .font(.footnote)
                                         Text(collection.date.formatted(date: .abbreviated, time: .omitted))
                                             .font(.footnote)
-                                        Text(collection.amount.formatted(.currency(code: locale.currency?.identifier ?? "USD")))
+                                        Text(collection.amount.formatted(.currency(code: currencyCode)))
                                             .font(.footnote)
                                     }
                                 }
@@ -149,7 +149,7 @@ struct MeetingView: View {
                         VStack(alignment: .leading) {
                             Text("\(meeting.rentIntervalString) Rent")
                                 .font(.footnote)
-                            Text(meeting.rent.formatted(.currency(code: locale.currency?.identifier ?? "USD")))
+                            Text(meeting.rent.formatted(.currency(code: currencyCode)))
                         }
                         NavigationLink(destination: RentPaymentsView(meeting: $meeting)) {
                             VStack(alignment: .leading) {
@@ -161,7 +161,7 @@ struct MeetingView: View {
                                             .font(.footnote)
                                         Text(rentPayment.date.formatted(date: .abbreviated, time: .omitted))
                                             .font(.footnote)
-                                        Text(rentPayment.amount.formatted(.currency(code: locale.currency?.identifier ?? "USD")))
+                                        Text(rentPayment.amount.formatted(.currency(code: currencyCode)))
                                             .font(.footnote)
                                     }
                                 }
@@ -179,7 +179,7 @@ struct MeetingView: View {
                                         .font(.footnote)
                                     Text(payment.date.formatted(date: .abbreviated, time: .omitted))
                                         .font(.footnote)
-                                    Text(payment.amount.formatted(.currency(code: locale.currency?.identifier ?? "USD")))
+                                    Text(payment.amount.formatted(.currency(code: currencyCode)))
                                         .font(.footnote)
                                 }
                             }

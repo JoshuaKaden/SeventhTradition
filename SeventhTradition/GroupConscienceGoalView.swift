@@ -12,7 +12,7 @@ struct GroupConscienceGoalView: View {
     
     @State var goal: GroupConscienceGoal?
     
-    @Environment(\.locale) private var locale
+    @Environment(\.currencyCode) private var currencyCode
     @Environment(\.modelContext) private var modelContext
     
     @State private var isEditing: Bool = false
@@ -121,7 +121,7 @@ struct GroupConscienceGoalView: View {
                             VStack(alignment: .leading) {
                                 Text("Amount")
                                     .font(.footnote)
-                                Text(goal.amount.formatted(.currency(code: locale.currency?.identifier ?? "USD")))
+                                Text(goal.amount.formatted(.currency(code: currencyCode)))
                             }
                         }
                         VStack(alignment: .leading) {

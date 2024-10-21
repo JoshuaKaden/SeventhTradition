@@ -12,7 +12,7 @@ struct GroupConsciencePaymentView: View {
     
     @State var payment: GroupConsciencePayment?
     
-    @Environment(\.locale) private var locale
+    @Environment(\.currencyCode) private var currencyCode
     @Environment(\.modelContext) private var modelContext
     
     @State private var isEditing: Bool = false
@@ -66,7 +66,7 @@ struct GroupConsciencePaymentView: View {
                         VStack(alignment: .leading) {
                             Text("Amount")
                                 .font(.footnote)
-                            Text(payment.amount.formatted(.currency(code: locale.currency?.identifier ?? "USD")))
+                            Text(payment.amount.formatted(.currency(code: currencyCode)))
                         }
                         VStack(alignment: .leading) {
                             Text("Method")

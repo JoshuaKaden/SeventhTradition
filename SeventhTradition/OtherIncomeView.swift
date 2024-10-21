@@ -12,7 +12,7 @@ struct OtherIncomeView: View {
     
     @State var otherIncome: OtherIncome?
     
-    @Environment(\.locale) private var locale
+    @Environment(\.currencyCode) private var currencyCode
     @Environment(\.modelContext) private var modelContext
     
     @State private var isEditing: Bool = false
@@ -61,7 +61,7 @@ struct OtherIncomeView: View {
                         VStack(alignment: .leading) {
                             Text("Amount")
                                 .font(.footnote)
-                            Text(otherIncome.amount.formatted(.currency(code: locale.currency?.identifier ?? "USD")))
+                            Text(otherIncome.amount.formatted(.currency(code: currencyCode)))
                         }
                         VStack(alignment: .leading) {
                             Text("Info")

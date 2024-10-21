@@ -12,7 +12,7 @@ struct GroupConscienceGoalsView: View {
     
     @Binding var meeting: Meeting?
     
-    @Environment(\.locale) private var locale
+    @Environment(\.currencyCode) private var currencyCode
     @Environment(\.modelContext) private var modelContext
     
     @Query(sort: \GroupConscienceGoal.type) private var groupConscienceGoals: [GroupConscienceGoal]
@@ -29,7 +29,7 @@ struct GroupConscienceGoalsView: View {
                         if goal.isPercent {
                             Text(goal.percent.formatted(.percent))
                         } else {
-                            Text(goal.amount.formatted(.currency(code: locale.currency?.identifier ?? "USD")))
+                            Text(goal.amount.formatted(.currency(code: currencyCode)))
                         }
                     }
                 }

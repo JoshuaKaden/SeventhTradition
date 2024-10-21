@@ -12,7 +12,7 @@ struct CollectionView: View {
     
     @State var collection: Collection?
     
-    @Environment(\.locale) private var locale
+    @Environment(\.currencyCode) private var currencyCode
     @Environment(\.modelContext) private var modelContext
     
     @State private var isEditing: Bool = false
@@ -56,7 +56,7 @@ struct CollectionView: View {
                         VStack(alignment: .leading) {
                             Text("Amount")
                                 .font(.footnote)
-                            Text(collection.amount.formatted(.currency(code: locale.currency?.identifier ?? "USD")))
+                            Text(collection.amount.formatted(.currency(code: currencyCode)))
                         }
                     }
                 }

@@ -12,7 +12,7 @@ struct CollectionsView: View {
     
     @Binding var meeting: Meeting?
     
-    @Environment(\.locale) private var locale
+    @Environment(\.currencyCode) private var currencyCode
     @Environment(\.modelContext) private var modelContext
     
     @Query(sort: \Collection.date, order: .reverse) private var collections: [Collection]
@@ -26,7 +26,7 @@ struct CollectionsView: View {
                     HStack {
                         Text(collection.date.formatted(date: .abbreviated, time: .omitted))
                         Spacer()
-                        Text(collection.amount.formatted(.currency(code: locale.currency?.identifier ?? "USD")))
+                        Text(collection.amount.formatted(.currency(code: currencyCode)))
                     }
                 }
             }

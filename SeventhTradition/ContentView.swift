@@ -8,8 +8,21 @@
 import SwiftUI
 import SwiftData
 
+private struct CurrencyCodeEnvironmentKey: EnvironmentKey {
+    static let defaultValue: String = "USD"
+}
+
+extension EnvironmentValues {
+    var currencyCode: String {
+        get { self[CurrencyCodeEnvironmentKey.self] }
+        set { self[CurrencyCodeEnvironmentKey.self] = newValue }
+    }
+}
+
 struct ContentView: View {
+    @Environment(\.locale) private var locale
     @Environment(\.modelContext) private var modelContext
+    
     @Query private var meetings: [Meeting]
 
     @State private var selectedMeeting: Meeting?
@@ -46,6 +59,7 @@ struct ContentView: View {
                 }
             }
         }
+        .environment(\.currencyCode, locale.currency?.identifier ?? "USD")
     }
 
     private func addItem() {

@@ -12,7 +12,7 @@ struct RentPaymentsView: View {
     
     @Binding var meeting: Meeting?
     
-    @Environment(\.locale) private var locale
+    @Environment(\.currencyCode) private var currencyCode
     @Environment(\.modelContext) private var modelContext
     
     @Query(sort: \RentPayment.date, order: .reverse) private var rentPayments: [RentPayment]
@@ -26,7 +26,7 @@ struct RentPaymentsView: View {
                     HStack {
                         Text(rentPayment.date.formatted(date: .abbreviated, time: .omitted))
                         Spacer()
-                        Text(rentPayment.amount.formatted(.currency(code: locale.currency?.identifier ?? "USD")))
+                        Text(rentPayment.amount.formatted(.currency(code: currencyCode)))
                     }
                 }
             }

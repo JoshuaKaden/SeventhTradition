@@ -12,7 +12,7 @@ struct GroupConsciencePaymentsView: View {
     
     @Binding var meeting: Meeting?
     
-    @Environment(\.locale) private var locale
+    @Environment(\.currencyCode) private var currencyCode
     @Environment(\.modelContext) private var modelContext
     
     @Query(sort: \GroupConsciencePayment.date, order: .reverse) private var groupConsciencePayments: [GroupConsciencePayment]
@@ -26,7 +26,7 @@ struct GroupConsciencePaymentsView: View {
                     HStack {
                         Text(payment.date.formatted(date: .abbreviated, time: .omitted))
                         Spacer()
-                        Text(payment.amount.formatted(.currency(code: locale.currency?.identifier ?? "USD")))
+                        Text(payment.amount.formatted(.currency(code: currencyCode)))
                     }
                 }
             }
