@@ -54,7 +54,7 @@ struct Report: View {
             
             let gotBB = collectionsTotalBB + otherIncomeTotalBB
             let spentBB = rentPaymentsTotalBB + groupConscienceTotalBB + otherExpensesTotalBB
-            let startingBalance = meeting.beginningBalance + gotBB - spentBB - meeting.prudentReserve
+            let startingBalance = meeting.beginningBalance + gotBB - spentBB
             
             let collectionsTotal = collections
                 .filter({ $0.meeting == meeting && $0.date >= startDate && $0.date <= endDate })
@@ -83,7 +83,7 @@ struct Report: View {
 
             let got = collectionsTotal + otherIncomeTotal
             let spent = rentPaymentsTotal + groupConscienceTotal + otherExpensesTotal
-            let endingBalance = startingBalance + got - spent
+            let endingBalance = startingBalance + got - spent - meeting.prudentReserve
             
             List {
                 DatePicker("Start date", selection: $startDate)
@@ -120,6 +120,12 @@ struct Report: View {
                         .monospaced()
                 }
                 HStack {
+                    Text("Prudent Reserve")
+                    Spacer()
+                    Text((meeting.prudentReserve * -1).formatted(.currency(code: currencyCode)))
+                        .monospaced()
+                }
+                HStack {
                     Text("Group Conscience")
                     Spacer()
                     Text((groupConscienceTotal * -1).formatted(.currency(code: currencyCode)))
@@ -132,6 +138,7 @@ struct Report: View {
                         .monospaced()
                 }
             }
+            .navigationTitle("Report")
         }
     }
 }
