@@ -13,6 +13,7 @@ final class Meeting {
     var id: UUID
     var name: String
     var beginningBalance: Double
+    var cashOnHand: Double
     var location: String
     var prudentReserve: Double
     var rent: Double
@@ -32,10 +33,15 @@ final class Meeting {
         }
     }
     
-    init(id: UUID, name: String, beginningBalance: Double = 0, location: String = "", prudentReserve: Double = 0, rent: Double = 0, rentIsMonthly: Bool = false, collections: [Collection]? = nil, groupConscienceGoals: [GroupConscienceGoal]? = nil, groupConsciencePayments: [GroupConsciencePayment]? = nil, otherIncome: [OtherIncome]? = nil, rentPayments: [RentPayment]? = nil) {
+    var treasuryBalance: Double {
+        cashOnHand - prudentReserve
+    }
+    
+    init(id: UUID, name: String, beginningBalance: Double = 0, cashOnHand: Double = 0, location: String = "", prudentReserve: Double = 0, rent: Double = 0, rentIsMonthly: Bool = false, collections: [Collection]? = nil, groupConscienceGoals: [GroupConscienceGoal]? = nil, groupConsciencePayments: [GroupConsciencePayment]? = nil, otherIncome: [OtherIncome]? = nil, rentPayments: [RentPayment]? = nil) {
         self.id = id
         self.name = name
         self.beginningBalance = beginningBalance
+        self.cashOnHand = cashOnHand
         self.location = location
         self.prudentReserve = prudentReserve
         self.rent = rent

@@ -114,7 +114,7 @@ struct GroupConscienceGoalView: View {
                         if goal.isPercent {
                             VStack(alignment: .leading) {
                                 Text(goal.percent.formatted(.percent))
-                                Text("Of Treasury Balance")
+                                Text("of Treasury Balance")
                                     .font(.footnote)
                             }
                         } else {

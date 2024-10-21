@@ -171,21 +171,30 @@ struct MeetingView: View {
                     
                     Section("Group Conscience") {
                         NavigationLink(destination: GroupConsciencePaymentsView(meeting: $meeting)) {
-                            Text("Payments")
-                            let payments = groupConsciencePayments.filter({ $0.meeting == meeting })
-                            if let payment = payments.first {
-                                HStack {
-                                    Text("Most Recent")
-                                        .font(.footnote)
-                                    Text(payment.date.formatted(date: .abbreviated, time: .omitted))
-                                        .font(.footnote)
-                                    Text(payment.amount.formatted(.currency(code: currencyCode)))
-                                        .font(.footnote)
+                            VStack(alignment: .leading) {
+                                Text("Payments")
+                                let payments = groupConsciencePayments.filter({ $0.meeting == meeting })
+                                if let payment = payments.first {
+                                    HStack {
+                                        Text("Most Recent")
+                                            .font(.footnote)
+                                        Text(payment.date.formatted(date: .abbreviated, time: .omitted))
+                                            .font(.footnote)
+                                        Text(payment.amount.formatted(.currency(code: currencyCode)))
+                                            .font(.footnote)
+                                    }
                                 }
                             }
                         }
                         NavigationLink(destination: GroupConscienceGoalsView(meeting: $meeting)) {
                             Text("Goals")
+                        }
+                        NavigationLink(destination: GeneratePaymentsView(meeting: $meeting)) {
+                            VStack(alignment: .leading) {
+                                Text("Auto-create payments")
+                                Text("Use this to generate a payment for each goal")
+                                    .font(.footnote)
+                            }
                         }
                     }
                     
@@ -245,14 +254,15 @@ struct MeetingView: View {
     
     private func assignToMeeting() {
         if let meeting {
+            updateSummaries()
+            
             meeting.name = name
             meeting.location = location
             meeting.beginningBalance = beginningBalance
+            meeting.cashOnHand = cashOnHand
             meeting.prudentReserve = prudentReserve
             meeting.rent = rent
             meeting.rentIsMonthly = rentIsMonthly
-            
-            updateSummaries()
         }
     }
     
