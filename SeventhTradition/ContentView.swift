@@ -33,17 +33,11 @@ struct ContentView: View {
                 ForEach(meetings) { meeting in
                     NavigationLink(meeting.name, value: meeting)
                 }
-                .onDelete(perform: deleteItems)
             }
 #if os(macOS)
             .navigationSplitViewColumnWidth(min: 180, ideal: 200)
 #endif
             .toolbar {
-#if os(iOS)
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-#endif
                 ToolbarItem {
                     Button(action: addItem) {
                         Label("Add Item", systemImage: "plus")
@@ -69,35 +63,6 @@ struct ContentView: View {
         }
     }
 
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                let meeting = meetings[index]
-                
-                for item in meeting.collections ?? [] {
-                    modelContext.delete(item)
-                }
-
-                for item in meeting.groupConscienceGoals ?? [] {
-                    modelContext.delete(item)
-                }
-
-                for item in meeting.groupConsciencePayments ?? [] {
-                    modelContext.delete(item)
-                }
-
-                for item in meeting.otherIncome ?? [] {
-                    modelContext.delete(item)
-                }
-
-                for item in meeting.rentPayments ?? [] {
-                    modelContext.delete(item)
-                }
-
-                modelContext.delete(meeting)
-            }
-        }
-    }
 }
 
 #Preview {

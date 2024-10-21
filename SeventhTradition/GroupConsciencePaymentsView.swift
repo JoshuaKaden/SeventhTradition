@@ -24,7 +24,11 @@ struct GroupConsciencePaymentsView: View {
             ForEach(groupConsciencePayments.filter({ $0.meeting == meeting })) { payment in
                 NavigationLink(destination: GroupConsciencePaymentView(payment: payment)) {
                     HStack {
-                        Text(payment.date.formatted(date: .abbreviated, time: .omitted))
+                        VStack(alignment: .leading) {
+                            Text(payment.date.formatted(date: .abbreviated, time: .omitted))
+                            Text(payment.type)
+                                .font(.footnote)
+                        }
                         Spacer()
                         Text(payment.amount.formatted(.currency(code: currencyCode)))
                     }

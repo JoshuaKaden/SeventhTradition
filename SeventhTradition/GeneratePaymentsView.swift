@@ -12,10 +12,13 @@ struct GeneratePaymentsView: View {
     
     @Binding var meeting: Meeting?
     
+    @Environment(\.dismiss) private var dismiss
     @Environment(\.currencyCode) private var currencyCode
     @Environment(\.modelContext) private var modelContext
     
     @Query(sort: \GroupConscienceGoal.type) private var groupConscienceGoals: [GroupConscienceGoal]
+    
+    @State private var isPresentingConfirm = false
     
     var body: some View {
         if groupConscienceGoals.isEmpty {
@@ -36,6 +39,7 @@ struct GeneratePaymentsView: View {
                         Text("Treasury Balance")
                         Spacer()
                         Text(treasuryBalance.formatted(.currency(code: currencyCode)))
+                            .monospaced()
                     }
                     Text("-- Payments to be created --")
                         .font(.footnote)
@@ -50,15 +54,60 @@ struct GeneratePaymentsView: View {
                             if goal.isPercent {
                                 let paymentAmount = treasuryBalance * goal.percent
                                 Text(paymentAmount.formatted(.currency(code: currencyCode)))
+                                    .monospaced()
                             } else {
                                 Text(goal.amount.formatted(.currency(code: currencyCode)))
+                                    .monospaced()
                             }
                         }
                     }
+                }
+                
+                Section {
+                    Button {
+                        isPresentingConfirm = true
+                    } label: {
+                        Text("GO")
+                    }
+                    .confirmationDialog("Are you sure?", isPresented: $isPresentingConfirm) {
+                        Button("Create these payments?") {
+                            createPayments()
+                        }
+                    }
+                    .buttonStyle(.borderless)
+                    .padding()
+                    .frame(maxWidth: .infinity)
                 }
             }
             .formStyle(.grouped)
             .navigationTitle("GC Auto Pay")
         }
+    }
+    
+    private func createPayments() {
+        guard let meeting else {
+            dismiss()
+            return
+        }
+        
+        for goal in groupConscienceGoals.filter({ $0.meeting == meeting }) {
+            let paymentAmount: Double
+            if goal.isPercent {
+                paymentAmount = meeting.treasuryBalance * goal.percent
+            } else {
+                paymentAmount = goal.amount
+            }
+            if paymentAmount > 0 {
+                let new = GroupConsciencePayment(amount: paymentAmount, date: Date(), method: "", type: goal.type, who: "")
+                modelContext.insert(new)
+                meeting.groupConsciencePayments?.append(new)
+                new.meeting = meeting
+            }
+        }
+        
+        meeting.updateSummaries()
+        
+        try? modelContext.save()
+        dismiss()
     }
 }

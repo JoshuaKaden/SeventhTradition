@@ -52,4 +52,60 @@ final class Meeting {
         self.otherIncome = otherIncome
         self.rentPayments = rentPayments
     }
+    
+    func updateSummaries(collections collectionsParam: [Collection] = [], groupConsciencePayments groupConsciencePaymentsParam: [GroupConsciencePayment] = [], otherIncomes otherIncomesParam: [OtherIncome] = [], rentPayments rentPaymentsParam: [RentPayment] = []) {
+        
+        let collections: [Collection]
+        if collectionsParam.isEmpty {
+            collections = self.collections ?? []
+        } else {
+            collections = collectionsParam
+        }
+        
+        let groupConsciencePayments: [GroupConsciencePayment]
+        if groupConsciencePaymentsParam.isEmpty {
+            groupConsciencePayments = self.groupConsciencePayments ?? []
+        } else {
+            groupConsciencePayments = groupConsciencePaymentsParam
+        }
+        
+        let otherIncomes: [OtherIncome]
+        if otherIncomesParam.isEmpty {
+            otherIncomes = self.otherIncome ?? []
+        } else {
+            otherIncomes = otherIncomesParam
+        }
+        
+        let rentPayments: [RentPayment]
+        if rentPaymentsParam.isEmpty {
+            rentPayments = self.rentPayments ?? []
+        } else {
+            rentPayments = rentPaymentsParam
+        }
+        
+        let collectionsTotal = collections
+            .filter({ $0.meeting == self })
+            .map { $0.amount }
+            .reduce(0, +)
+        
+        let groupConscienceTotal = groupConsciencePayments
+            .filter({ $0.meeting == self })
+            .map { $0.amount }
+            .reduce(0, +)
+        
+        let otherIncomeTotal = otherIncomes
+            .filter({ $0.meeting == self })
+            .map { $0.amount }
+            .reduce(0, +)
+
+        let rentPaymentsTotal = rentPayments
+            .filter({ $0.meeting == self })
+            .map { $0.amount }
+            .reduce(0, +)
+        
+        let got = collectionsTotal + otherIncomeTotal
+        let spent = rentPaymentsTotal + groupConscienceTotal
+        
+        cashOnHand = beginningBalance + got - spent
+    }
 }

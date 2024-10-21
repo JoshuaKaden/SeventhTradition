@@ -13,6 +13,7 @@ struct MeetingView: View {
     @Binding var meeting: Meeting?
     
     @Environment(\.currencyCode) private var currencyCode
+    @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
 
     @Query(sort: \Collection.date, order: .reverse) private var collections: [Collection]
@@ -21,6 +22,7 @@ struct MeetingView: View {
     @Query(sort: \RentPayment.date, order: .reverse) private var rentPayments: [RentPayment]
 
     @State private var isEditing: Bool = false
+    @State private var isPresentingConfirm = false
     @State private var name: String = ""
     @State private var location: String = ""
     @State private var beginningBalance: Double = 0
@@ -83,6 +85,23 @@ struct MeetingView: View {
                             .keyboardType(.decimalPad)
 #endif
                     }
+                    
+                    Section {
+                        Button("Delete", role: .destructive) {
+                            isPresentingConfirm = true
+                        }
+                        .confirmationDialog("Are you sure?", isPresented: $isPresentingConfirm) {
+                            Button("Delete this meeting?", role: .destructive) {
+                                deleteMeeting()
+                            }
+                        } message: {
+                            Text("This meeting, and all its associated data (payments, etc.) will be deleted")
+                        }
+                        .buttonStyle(.borderless)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                    }
+
                 } else {
                     Section {
                         VStack(alignment: .leading) {
@@ -194,6 +213,7 @@ struct MeetingView: View {
                                 Text("Auto-create payments")
                                 Text("Use this to generate a payment for each goal")
                                     .font(.footnote)
+                                    .italic()
                             }
                         }
                     }
@@ -259,7 +279,6 @@ struct MeetingView: View {
             meeting.name = name
             meeting.location = location
             meeting.beginningBalance = beginningBalance
-            meeting.cashOnHand = cashOnHand
             meeting.prudentReserve = prudentReserve
             meeting.rent = rent
             meeting.rentIsMonthly = rentIsMonthly
@@ -271,6 +290,38 @@ struct MeetingView: View {
             assignFromMeeting()
             isEditing = false
         }
+    }
+    
+    private func deleteMeeting() {
+        guard let meeting else {
+            dismiss()
+            return
+        }
+        
+        for item in meeting.collections ?? [] {
+            modelContext.delete(item)
+        }
+
+        for item in meeting.groupConscienceGoals ?? [] {
+            modelContext.delete(item)
+        }
+
+        for item in meeting.groupConsciencePayments ?? [] {
+            modelContext.delete(item)
+        }
+
+        for item in meeting.otherIncome ?? [] {
+            modelContext.delete(item)
+        }
+
+        for item in meeting.rentPayments ?? [] {
+            modelContext.delete(item)
+        }
+
+        modelContext.delete(meeting)
+        
+        try? modelContext.save()
+        dismiss()
     }
     
     private func saveMeeting() {
@@ -288,29 +339,15 @@ struct MeetingView: View {
     }
     
     private func updateSummaries() {
-        let collectionsTotal = collections
-            .filter({ $0.meeting == meeting })
-            .map { $0.amount }
-            .reduce(0, +)
+        meeting?.updateSummaries(
+            collections: collections.filter({ $0.meeting == meeting }),
+            groupConsciencePayments: groupConsciencePayments.filter({ $0.meeting == meeting }),
+            otherIncomes: otherIncomes.filter({ $0.meeting == meeting }),
+            rentPayments: rentPayments.filter({ $0.meeting == meeting })
+        )
         
-        let groupConscienceTotal = groupConsciencePayments
-            .filter({ $0.meeting == meeting })
-            .map { $0.amount }
-            .reduce(0, +)
+        try? modelContext.save()
         
-        let otherIncomeTotal = otherIncomes
-            .filter({ $0.meeting == meeting })
-            .map { $0.amount }
-            .reduce(0, +)
-
-        let rentPaymentsTotal = rentPayments
-            .filter({ $0.meeting == meeting })
-            .map { $0.amount }
-            .reduce(0, +)
-        
-        let got = collectionsTotal + otherIncomeTotal
-        let spent = rentPaymentsTotal + groupConscienceTotal
-        
-        cashOnHand = beginningBalance + got - spent
+        cashOnHand = meeting?.cashOnHand ?? 0
     }
 }
