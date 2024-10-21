@@ -14,6 +14,7 @@ final class Meeting {
     var name: String
     var beginningBalance: Double
     var cashOnHand: Double
+    var cashOnHandAsOf: Date
     var location: String
     var prudentReserve: Double
     var rent: Double
@@ -22,6 +23,7 @@ final class Meeting {
     @Relationship(inverse: \Collection.meeting)             var collections:             [Collection]? = []
     @Relationship(inverse: \GroupConscienceGoal.meeting)    var groupConscienceGoals:    [GroupConscienceGoal]? = []
     @Relationship(inverse: \GroupConsciencePayment.meeting) var groupConsciencePayments: [GroupConsciencePayment]? = []
+    @Relationship(inverse: \OtherExpense.meeting)           var otherExpenses:           [OtherExpense]? = []
     @Relationship(inverse: \OtherIncome.meeting)            var otherIncome:             [OtherIncome]? = []
     @Relationship(inverse: \RentPayment.meeting)            var rentPayments:            [RentPayment]? = []
     
@@ -37,11 +39,12 @@ final class Meeting {
         cashOnHand - prudentReserve
     }
     
-    init(id: UUID, name: String, beginningBalance: Double = 0, cashOnHand: Double = 0, location: String = "", prudentReserve: Double = 0, rent: Double = 0, rentIsMonthly: Bool = false, collections: [Collection]? = nil, groupConscienceGoals: [GroupConscienceGoal]? = nil, groupConsciencePayments: [GroupConsciencePayment]? = nil, otherIncome: [OtherIncome]? = nil, rentPayments: [RentPayment]? = nil) {
+    init(id: UUID, name: String, beginningBalance: Double = 0, cashOnHand: Double = 0, cashOnHandAsOf: Date = Date(), location: String = "", prudentReserve: Double = 0, rent: Double = 0, rentIsMonthly: Bool = false, collections: [Collection]? = nil, groupConscienceGoals: [GroupConscienceGoal]? = nil, groupConsciencePayments: [GroupConsciencePayment]? = nil, otherIncome: [OtherIncome]? = nil, rentPayments: [RentPayment]? = nil) {
         self.id = id
         self.name = name
         self.beginningBalance = beginningBalance
         self.cashOnHand = cashOnHand
+        self.cashOnHandAsOf = cashOnHandAsOf
         self.location = location
         self.prudentReserve = prudentReserve
         self.rent = rent
@@ -53,7 +56,7 @@ final class Meeting {
         self.rentPayments = rentPayments
     }
     
-    func updateSummaries(collections collectionsParam: [Collection] = [], groupConsciencePayments groupConsciencePaymentsParam: [GroupConsciencePayment] = [], otherIncomes otherIncomesParam: [OtherIncome] = [], rentPayments rentPaymentsParam: [RentPayment] = []) {
+    func updateSummaries(collections collectionsParam: [Collection] = [], groupConsciencePayments groupConsciencePaymentsParam: [GroupConsciencePayment] = [], otherExpenses otherExpensesParam: [OtherExpense] = [], otherIncomes otherIncomesParam: [OtherIncome] = [], rentPayments rentPaymentsParam: [RentPayment] = []) {
         
         let collections: [Collection]
         if collectionsParam.isEmpty {
@@ -67,6 +70,13 @@ final class Meeting {
             groupConsciencePayments = self.groupConsciencePayments ?? []
         } else {
             groupConsciencePayments = groupConsciencePaymentsParam
+        }
+        
+        let otherExpenses: [OtherExpense]
+        if otherExpensesParam.isEmpty {
+            otherExpenses = self.otherExpenses ?? []
+        } else {
+            otherExpenses = otherExpensesParam
         }
         
         let otherIncomes: [OtherIncome]
@@ -93,6 +103,11 @@ final class Meeting {
             .map { $0.amount }
             .reduce(0, +)
         
+        let otherExpensesTotal = otherExpenses
+            .filter({ $0.meeting == self })
+            .map { $0.amount }
+            .reduce(0, +)
+        
         let otherIncomeTotal = otherIncomes
             .filter({ $0.meeting == self })
             .map { $0.amount }
@@ -104,8 +119,9 @@ final class Meeting {
             .reduce(0, +)
         
         let got = collectionsTotal + otherIncomeTotal
-        let spent = rentPaymentsTotal + groupConscienceTotal
+        let spent = rentPaymentsTotal + groupConscienceTotal + otherExpensesTotal
         
         cashOnHand = beginningBalance + got - spent
+        cashOnHandAsOf = Date()
     }
 }

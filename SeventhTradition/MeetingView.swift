@@ -139,6 +139,9 @@ struct MeetingView: View {
                                 .font(.footnote)
                             let balance = cashOnHand - meeting.prudentReserve
                             Text(balance.formatted(.currency(code: currencyCode)))
+                            Text("as of \(meeting.cashOnHandAsOf.formatted(date: .abbreviated, time: .standard))")
+                                .font(.footnote)
+                                .italic()
                         }
                     }
                     
@@ -186,8 +189,11 @@ struct MeetingView: View {
                                 }
                             }
                         }
+                        NavigationLink(destination: OtherExpensesView(meeting: $meeting)) {
+                            Text("Other Expenses")
+                        }
                     }
-                    
+                                        
                     Section("Group Conscience") {
                         NavigationLink(destination: GroupConsciencePaymentsView(meeting: $meeting)) {
                             VStack(alignment: .leading) {
@@ -261,27 +267,27 @@ struct MeetingView: View {
     
     private func assignFromMeeting() {
         if let meeting {
+            updateSummaries()
+            
             name = meeting.name
             location = meeting.location
             beginningBalance = meeting.beginningBalance
             prudentReserve = meeting.prudentReserve
             rent = meeting.rent
             rentIsMonthly = meeting.rentIsMonthly
-            
-            updateSummaries()
         }
     }
     
     private func assignToMeeting() {
         if let meeting {
-            updateSummaries()
-            
             meeting.name = name
             meeting.location = location
             meeting.beginningBalance = beginningBalance
             meeting.prudentReserve = prudentReserve
             meeting.rent = rent
             meeting.rentIsMonthly = rentIsMonthly
+            
+            updateSummaries()
         }
     }
     

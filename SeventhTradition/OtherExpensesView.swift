@@ -1,5 +1,5 @@
 //
-//  OtherIncomesView.swift
+//  OtherExpensesView.swift
 //  SeventhTradition
 //
 //  Created by Joshua Kaden on 10/14/24.
@@ -8,35 +8,35 @@
 import SwiftData
 import SwiftUI
 
-struct OtherIncomesView: View {
+struct OtherExpensesView: View {
     
     @Binding var meeting: Meeting?
     
     @Environment(\.currencyCode) private var currencyCode
     @Environment(\.modelContext) private var modelContext
     
-    @Query(sort: \OtherIncome.date, order: .reverse) private var otherIncomes: [OtherIncome]
+    @Query(sort: \OtherExpense.date, order: .reverse) private var otherExpenses: [OtherExpense]
     
-    @State private var selectedOtherIncome: OtherIncome?
+    @State private var selectedOtherExpense: OtherExpense?
     
     var body: some View {
-        List(selection: $selectedOtherIncome) {
-            ForEach(otherIncomes.filter({ $0.meeting == meeting })) { otherIncome in
-                NavigationLink(destination: OtherIncomeView(otherIncome: otherIncome)) {
+        List(selection: $selectedOtherExpense) {
+            ForEach(otherExpenses.filter({ $0.meeting == meeting })) { otherExpense in
+                NavigationLink(destination: OtherExpenseView(otherExpense: otherExpense)) {
                     HStack {
                         VStack(alignment: .leading) {
-                            Text(otherIncome.date.formatted(date: .abbreviated, time: .omitted))
-                            Text(otherIncome.info)
+                            Text(otherExpense.date.formatted(date: .abbreviated, time: .omitted))
+                            Text(otherExpense.info)
                                 .font(.footnote)
                         }
                         Spacer()
-                        Text(otherIncome.amount.formatted(.currency(code: currencyCode)))
+                        Text(otherExpense.amount.formatted(.currency(code: currencyCode)))
                     }
                 }
             }
             .onDelete(perform: deleteItems)
         }
-        .navigationTitle("Other Income")
+        .navigationTitle("Other Expenses")
         .toolbar {
 #if os(iOS)
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -53,19 +53,19 @@ struct OtherIncomesView: View {
     
     private func addItem() {
         withAnimation {
-            let new = OtherIncome(amount: 0, date: Date(), info: "")
+            let new = OtherExpense(amount: 0, date: Date(), info: "")
             modelContext.insert(new)
-            meeting?.otherIncome?.append(new)
+            meeting?.otherExpenses?.append(new)
             new.meeting = meeting
         }
         try? modelContext.save()
     }
     
     private func deleteItems(offsets: IndexSet) {
-        let otherIncomes = otherIncomes.filter({ $0.meeting == meeting })
+        let otherExpenses = otherExpenses.filter({ $0.meeting == meeting })
         withAnimation {
             for index in offsets {
-                modelContext.delete(otherIncomes[index])
+                modelContext.delete(otherExpenses[index])
             }
         }
         try? modelContext.save()

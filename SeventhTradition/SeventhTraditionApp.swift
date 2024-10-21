@@ -16,6 +16,7 @@ struct SeventhTraditionApp: App {
             GroupConscienceGoal.self,
             GroupConsciencePayment.self,
             Meeting.self,
+            OtherExpense.self,
             OtherIncome.self,
             RentPayment.self
         ])
