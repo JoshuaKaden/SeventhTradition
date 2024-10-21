@@ -143,6 +143,9 @@ struct MeetingView: View {
                                 .font(.footnote)
                                 .italic()
                         }
+                        NavigationLink(destination: Report(meeting: $meeting)) {
+                            Text("Treasurer's Report")
+                        }
                     }
                     
                     Section {
