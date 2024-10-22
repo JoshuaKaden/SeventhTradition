@@ -44,6 +44,11 @@ struct ContentView: View {
                     }
                 }
             }
+            .toolbar {
+                NavigationLink(destination: MetarealityView()) {
+                    Image(systemName: "questionmark.circle")
+                }
+            }
         } detail: {
             NavigationStack {
                 if selectedMeeting != nil {

@@ -6,13 +6,31 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		77C264562CC7ED8200BE2E34 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 77C264552CC7ED8200BE2E34 /* StoreKit.framework */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		7726804A2CB98667005CEE31 /* SeventhTradition.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SeventhTradition.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		77C264552CC7ED8200BE2E34 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		77C264582CC7EDC400BE2E34 /* Exceptions for "SeventhTradition" folder in "SeventhTradition" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 772680492CB98667005CEE31 /* SeventhTradition */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		7726804C2CB98667005CEE31 /* SeventhTradition */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				77C264582CC7EDC400BE2E34 /* Exceptions for "SeventhTradition" folder in "SeventhTradition" target */,
+			);
 			path = SeventhTradition;
 			sourceTree = "<group>";
 		};
@@ -23,6 +41,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				77C264562CC7ED8200BE2E34 /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -33,6 +52,7 @@
 			isa = PBXGroup;
 			children = (
 				7726804C2CB98667005CEE31 /* SeventhTradition */,
+				77C264542CC7ED8200BE2E34 /* Frameworks */,
 				7726804B2CB98667005CEE31 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -43,6 +63,14 @@
 				7726804A2CB98667005CEE31 /* SeventhTradition.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		77C264542CC7ED8200BE2E34 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				77C264552CC7ED8200BE2E34 /* StoreKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -252,6 +280,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SeventhTradition/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "7th Tradition";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
@@ -293,6 +322,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SeventhTradition/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "7th Tradition";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
