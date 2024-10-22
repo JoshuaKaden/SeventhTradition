@@ -37,14 +37,14 @@ struct CollectionView: View {
         } else if let collection {
             Form {
                 if isEditing {
+                    Section("Date") {
+                        DatePicker("", selection: $date)
+                    }
                     Section("Amount") {
                         TextField("", value: $amount, format: .number)
 #if os(iOS)
                             .keyboardType(.decimalPad)
 #endif
-                    }
-                    Section("Date") {
-                        DatePicker("", selection: $date)
                     }
                 } else {
                     Section {

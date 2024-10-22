@@ -53,7 +53,7 @@ struct GroupConscienceGoalsView: View {
     
     private func addItem() {
         withAnimation {
-            let new = GroupConscienceGoal(amount: 0, date: Date(), isPercent: false, percent: 0, type: "")
+            let new = GroupConscienceGoal(amount: 0, date: Date(), isPercent: true, percent: 0, type: "")
             new.type = "New Goal"
             modelContext.insert(new)
             meeting?.groupConscienceGoals?.append(new)

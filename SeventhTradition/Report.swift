@@ -20,8 +20,8 @@ struct Report: View {
     @Query(sort: \OtherIncome.date, order: .reverse) private var otherIncomes: [OtherIncome]
     @Query(sort: \RentPayment.date, order: .reverse) private var rentPayments: [RentPayment]
     
-    @State private var startDate: Date = Date()
-    @State private var endDate: Date = Date()
+    @State private var startDate: Date = Date().startDateOfMonth
+    @State private var endDate: Date = Date().endDateOfMonth
     
     var body: some View {
         
@@ -140,5 +140,21 @@ struct Report: View {
             }
             .navigationTitle("Report")
         }
+    }
+}
+
+extension Date {
+    var startDateOfMonth: Date {
+        guard let date = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: self)) else {
+            fatalError("Unable to get start date from date")
+        }
+        return date
+    }
+
+    var endDateOfMonth: Date {
+        guard let date = Calendar.current.date(byAdding: DateComponents(month: 1, day: -1, hour: 23, minute: 59), to: self.startDateOfMonth) else {
+            fatalError("Unable to get end date from date")
+        }
+        return date
     }
 }
