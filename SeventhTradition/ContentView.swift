@@ -19,6 +19,17 @@ extension EnvironmentValues {
     }
 }
 
+private struct MeetingEnvironmentKey: EnvironmentKey {
+    static let defaultValue: Meeting? = nil
+}
+
+extension EnvironmentValues {
+    var meeting: Meeting? {
+        get { self[MeetingEnvironmentKey.self] }
+        set { self[MeetingEnvironmentKey.self] = newValue }
+    }
+}
+
 struct ContentView: View {
     @Environment(\.locale) private var locale
     @Environment(\.modelContext) private var modelContext
@@ -45,20 +56,19 @@ struct ContentView: View {
                 }
             }
             .toolbar {
-                NavigationLink(destination: MetarealityView()) {
-                    Image(systemName: "questionmark.circle")
+                ToolbarItem {
+                    NavigationLink(destination: MetarealityView()) {
+                        Image(systemName: "questionmark.circle")
+                    }
                 }
             }
         } detail: {
             NavigationStack {
-                if selectedMeeting != nil {
-                    MeetingView(meeting: $selectedMeeting)
-                } else {
-                    Text("Select a meeting")
-                }
+                MeetingView()
             }
         }
         .environment(\.currencyCode, locale.currency?.identifier ?? "USD")
+        .environment(\.meeting, selectedMeeting)
     }
 
     private func addItem() {

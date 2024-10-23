@@ -10,10 +10,9 @@ import SwiftUI
 
 struct GeneratePaymentsView: View {
     
-    @Binding var meeting: Meeting?
-    
     @Environment(\.dismiss) private var dismiss
     @Environment(\.currencyCode) private var currencyCode
+    @Environment(\.meeting) private var meeting
     @Environment(\.modelContext) private var modelContext
     
     @Query(sort: \GroupConscienceGoal.type) private var groupConscienceGoals: [GroupConscienceGoal]

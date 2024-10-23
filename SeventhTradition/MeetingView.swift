@@ -10,10 +10,9 @@ import SwiftUI
 
 struct MeetingView: View {
     
-    @Binding var meeting: Meeting?
-    
     @Environment(\.currencyCode) private var currencyCode
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.meeting) private var meeting
     @Environment(\.modelContext) private var modelContext
 
     @Query(sort: \Collection.date, order: .reverse) private var collections: [Collection]
@@ -143,13 +142,13 @@ struct MeetingView: View {
                                 .font(.footnote)
                                 .italic()
                         }
-                        NavigationLink(destination: Report(meeting: $meeting)) {
+                        NavigationLink(destination: Report()) {
                             Text("Treasurer's Report")
                         }
                     }
                     
                     Section {
-                        NavigationLink(destination: CollectionsView(meeting: $meeting)) {
+                        NavigationLink(destination: CollectionsView()) {
                             VStack(alignment: .leading) {
                                 Text("Collections")
                                 let collections = collections.filter({ $0.meeting == meeting })
@@ -165,7 +164,7 @@ struct MeetingView: View {
                                 }
                             }
                         }
-                        NavigationLink(destination: OtherIncomesView(meeting: $meeting)) {
+                        NavigationLink(destination: OtherIncomesView()) {
                             Text("Other Income")
                         }
                     }
@@ -176,7 +175,7 @@ struct MeetingView: View {
                                 .font(.footnote)
                             Text(meeting.rent.formatted(.currency(code: currencyCode)))
                         }
-                        NavigationLink(destination: RentPaymentsView(meeting: $meeting)) {
+                        NavigationLink(destination: RentPaymentsView()) {
                             VStack(alignment: .leading) {
                                 Text("Rent Payments")
                                 let rentPayments = rentPayments.filter({ $0.meeting == meeting })
@@ -192,13 +191,13 @@ struct MeetingView: View {
                                 }
                             }
                         }
-                        NavigationLink(destination: OtherExpensesView(meeting: $meeting)) {
+                        NavigationLink(destination: OtherExpensesView()) {
                             Text("Other Expenses")
                         }
                     }
                                         
                     Section("Group Conscience") {
-                        NavigationLink(destination: GroupConsciencePaymentsView(meeting: $meeting)) {
+                        NavigationLink(destination: GroupConsciencePaymentsView()) {
                             VStack(alignment: .leading) {
                                 Text("Payments")
                                 let payments = groupConsciencePayments.filter({ $0.meeting == meeting })
@@ -214,10 +213,10 @@ struct MeetingView: View {
                                 }
                             }
                         }
-                        NavigationLink(destination: GroupConscienceGoalsView(meeting: $meeting)) {
+                        NavigationLink(destination: GroupConscienceGoalsView()) {
                             Text("Goals")
                         }
-                        NavigationLink(destination: GeneratePaymentsView(meeting: $meeting)) {
+                        NavigationLink(destination: GeneratePaymentsView()) {
                             VStack(alignment: .leading) {
                                 Text("Auto-create payments")
                                 Text("Use this to generate a payment for each goal")

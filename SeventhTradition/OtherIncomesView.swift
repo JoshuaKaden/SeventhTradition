@@ -9,10 +9,9 @@ import SwiftData
 import SwiftUI
 
 struct OtherIncomesView: View {
-    
-    @Binding var meeting: Meeting?
-    
+        
     @Environment(\.currencyCode) private var currencyCode
+    @Environment(\.meeting) private var meeting
     @Environment(\.modelContext) private var modelContext
     
     @Query(sort: \OtherIncome.date, order: .reverse) private var otherIncomes: [OtherIncome]

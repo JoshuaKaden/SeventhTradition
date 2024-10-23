@@ -10,9 +10,8 @@ import SwiftUI
 
 struct RentPaymentsView: View {
     
-    @Binding var meeting: Meeting?
-    
     @Environment(\.currencyCode) private var currencyCode
+    @Environment(\.meeting) private var meeting
     @Environment(\.modelContext) private var modelContext
     
     @Query(sort: \RentPayment.date, order: .reverse) private var rentPayments: [RentPayment]
@@ -48,14 +47,16 @@ struct RentPaymentsView: View {
     }
     
     private func addItem() {
-        withAnimation {
-            let new = RentPayment(date: Date())
-            new.amount = meeting?.rent ?? 0
-            modelContext.insert(new)
-            meeting?.rentPayments?.append(new)
-            new.meeting = meeting
+        if let meeting {
+            withAnimation {
+                let new = RentPayment(date: Date())
+                new.amount = meeting.rent
+                modelContext.insert(new)
+                meeting.rentPayments?.append(new)
+                new.meeting = meeting
+            }
+            try? modelContext.save()
         }
-        try? modelContext.save()
     }
     
     private func deleteItems(offsets: IndexSet) {

@@ -9,11 +9,10 @@ import SwiftData
 import SwiftUI
 
 struct Report: View {
-    
-    @Binding var meeting: Meeting?
-    
+        
     @Environment(\.currencyCode) private var currencyCode
-    
+    @Environment(\.meeting) private var meeting
+
     @Query(sort: \Collection.date, order: .reverse) private var collections: [Collection]
     @Query(sort: \GroupConsciencePayment.date, order: .reverse) private var groupConsciencePayments: [GroupConsciencePayment]
     @Query(sort: \OtherExpense.date, order: .reverse) private var otherExpenses: [OtherExpense]
@@ -139,6 +138,8 @@ struct Report: View {
                 }
             }
             .navigationTitle("Report")
+        } else {
+            ContentUnavailableView("No meeting selected", systemImage: "bubble.left.and.exclamationmark.bubble.right")
         }
     }
 }

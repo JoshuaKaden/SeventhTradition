@@ -9,10 +9,9 @@ import SwiftData
 import SwiftUI
 
 struct GroupConsciencePaymentsView: View {
-    
-    @Binding var meeting: Meeting?
-    
+        
     @Environment(\.currencyCode) private var currencyCode
+    @Environment(\.meeting) private var meeting
     @Environment(\.modelContext) private var modelContext
     
     @Query(sort: \GroupConsciencePayment.date, order: .reverse) private var groupConsciencePayments: [GroupConsciencePayment]

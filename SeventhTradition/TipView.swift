@@ -31,7 +31,6 @@ struct TipView: View {
             }
         }
         .navigationTitle("Leave a Tip")
-        .navigationBarTitleDisplayMode(.inline)
     }
 }
 

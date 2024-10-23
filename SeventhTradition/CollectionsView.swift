@@ -10,9 +10,8 @@ import SwiftUI
 
 struct CollectionsView: View {
     
-    @Binding var meeting: Meeting?
-    
     @Environment(\.currencyCode) private var currencyCode
+    @Environment(\.meeting) private var meeting
     @Environment(\.modelContext) private var modelContext
     
     @Query(sort: \Collection.date, order: .reverse) private var collections: [Collection]
