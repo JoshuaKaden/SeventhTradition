@@ -10,15 +10,13 @@ import SwiftUI
 struct MetarealityView: View {
     var body: some View {
         Form {
-//            Section {
-//                NavigationLink("About and Help", destination: AboutView())
-//                    .padding(8)
-//                NavigationLink("Technical Details", destination: TechView())
-//                    .padding(8)
-//            }
+            Section {
+                NavigationLink("About the app", destination: AboutView())
+                    .padding(8)
+            }
             
             Section {
-                NavigationLink("Leave a Tip", destination: TipView())
+                NavigationLink("Leave a tip", destination: TipView())
                     .padding(8)
             }
             

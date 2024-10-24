@@ -90,7 +90,7 @@ struct GroupConscienceGoalView: View {
                         Section("Percent") {
                             TextField("", value: $percentInt, format: .number)
 #if os(iOS)
-                                .keyboardType(.decimalPad)
+                                .keyboardType(.numberPad)
 #endif
                         }
                     } else {

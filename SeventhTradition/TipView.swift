@@ -23,14 +23,7 @@ struct TipView: View {
             ProductView(id: "com.sweetheartsoftware.seventhtradition2024.tipFiveDollars")
                 .productViewStyle(.compact)
         }
-        .toolbar {
-            Button {
-                dismiss()
-            } label: {
-                Image(systemName: "x.circle")
-            }
-        }
-        .navigationTitle("Leave a Tip")
+        .navigationTitle("Leave a tip")
     }
 }
 
