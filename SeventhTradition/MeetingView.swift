@@ -226,14 +226,14 @@ struct MeetingView: View {
                         }
                     }
                     
-                    Section {
-                        VStack(alignment: .leading) {
-                            Text("Meeting ID")
-                                .font(.footnote)
-                            Text(meeting.id.uuidString)
-                                .font(.footnote)
-                        }
-                    }
+//                    Section {
+//                        VStack(alignment: .leading) {
+//                            Text("Meeting ID")
+//                                .font(.footnote)
+//                            Text(meeting.id.uuidString)
+//                                .font(.footnote)
+//                        }
+//                    }
                 }
             }
             .formStyle(.grouped)
