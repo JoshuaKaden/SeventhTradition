@@ -142,13 +142,13 @@ struct MeetingView: View {
                                 .font(.footnote)
                                 .italic()
                         }
-                        NavigationLink(destination: Report()) {
+                        NavigationLink(value: NavTarget.report) {
                             Text("Treasurer's Report")
                         }
                     }
                     
                     Section {
-                        NavigationLink(destination: CollectionsView()) {
+                        NavigationLink(value: NavTarget.collections) {
                             VStack(alignment: .leading) {
                                 Text("Collections")
                                 let collections = collections.filter({ $0.meeting == meeting })
@@ -164,7 +164,7 @@ struct MeetingView: View {
                                 }
                             }
                         }
-                        NavigationLink(destination: OtherIncomesView()) {
+                        NavigationLink(value: NavTarget.otherIncome) {
                             Text("Other Income")
                         }
                     }
@@ -175,7 +175,7 @@ struct MeetingView: View {
                                 .font(.footnote)
                             Text(meeting.rent.formatted(.currency(code: currencyCode)))
                         }
-                        NavigationLink(destination: RentPaymentsView()) {
+                        NavigationLink(value: NavTarget.rentPayments) {
                             VStack(alignment: .leading) {
                                 Text("Rent Payments")
                                 let rentPayments = rentPayments.filter({ $0.meeting == meeting })
@@ -191,13 +191,13 @@ struct MeetingView: View {
                                 }
                             }
                         }
-                        NavigationLink(destination: OtherExpensesView()) {
+                        NavigationLink(value: NavTarget.otherExpenses) {
                             Text("Other Expenses")
                         }
                     }
                                         
                     Section("Group Conscience") {
-                        NavigationLink(destination: GroupConsciencePaymentsView()) {
+                        NavigationLink(value: NavTarget.gcPayments) {
                             VStack(alignment: .leading) {
                                 Text("Payments")
                                 let payments = groupConsciencePayments.filter({ $0.meeting == meeting })
@@ -213,10 +213,10 @@ struct MeetingView: View {
                                 }
                             }
                         }
-                        NavigationLink(destination: GroupConscienceGoalsView()) {
+                        NavigationLink(value: NavTarget.gcGoals) {
                             Text("Goals")
                         }
-                        NavigationLink(destination: GeneratePaymentsView()) {
+                        NavigationLink(value: NavTarget.gcAutoCreate) {
                             VStack(alignment: .leading) {
                                 Text("Auto-create payments")
                                 Text("Use this to generate a payment for each goal")
@@ -260,6 +260,26 @@ struct MeetingView: View {
                             Text("Edit")
                         }
                     }
+                }
+            }
+            .navigationDestination(for: NavTarget.self) { navTarget in
+                switch navTarget {
+                case .collections:
+                    CollectionsView()
+                case .gcAutoCreate:
+                    GeneratePaymentsView()
+                case .gcGoals:
+                    GroupConscienceGoalsView()
+                case .gcPayments:
+                    GroupConsciencePaymentsView()
+                case .otherExpenses:
+                    OtherExpensesView()
+                case .otherIncome:
+                    OtherIncomesView()
+                case .rentPayments:
+                    RentPaymentsView()
+                case .report:
+                    Report()
                 }
             }
         } else {
