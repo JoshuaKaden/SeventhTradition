@@ -95,7 +95,7 @@ struct Report: View {
                     DatePicker("End date", selection: $endDate)
                     
                     HStack {
-                        Text("Starting Balance")
+                        Text("Starting Cash On Hand")
                             .bold()
                         Spacer()
                         Text(startingBalance.formatted(.currency(code: currencyCode)))
@@ -127,15 +127,23 @@ struct Report: View {
                             .monospaced()
                     }
                     HStack {
-                        Text("Prudent Reserve")
-                        Spacer()
-                        Text((meeting.prudentReserve * -1).formatted(.currency(code: currencyCode)))
-                            .monospaced()
-                    }
-                    HStack {
                         Text("Group Conscience")
                         Spacer()
                         Text((groupConscienceTotal * -1).formatted(.currency(code: currencyCode)))
+                            .monospaced()
+                    }
+                    HStack {
+                        Text("Ending Cash On Hand")
+                            .bold()
+                        Spacer()
+                        Text((endingBalance + meeting.prudentReserve).formatted(.currency(code: currencyCode)))
+                            .monospaced()
+                            .bold()
+                    }
+                    HStack {
+                        Text("Prudent Reserve")
+                        Spacer()
+                        Text((meeting.prudentReserve * -1).formatted(.currency(code: currencyCode)))
                             .monospaced()
                     }
                     HStack {
