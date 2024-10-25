@@ -41,6 +41,9 @@ struct ContentView: View {
     var body: some View {
         NavigationSplitView {
             List(selection: $selectedMeeting) {
+                if meetings.isEmpty {
+                    ContentUnavailableView("Welcome to 7th Tradition", image: "IconImage64")
+                }
                 ForEach(meetings) { meeting in
                     NavigationLink(meeting.name, value: meeting)
                 }
