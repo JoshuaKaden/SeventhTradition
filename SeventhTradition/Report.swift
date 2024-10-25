@@ -220,10 +220,137 @@ struct Report: View {
                 
             }
             .formStyle(.grouped)
+            .toolbar {
+                ToolbarItem {
+                    let item = makeShareText()
+                    ShareLink(item: item) {
+                        Text("Share")
+                    }
+                }
+            }
             .navigationTitle("Report")
         } else {
             ContentUnavailableView("No meeting selected", systemImage: "bubble.left.and.exclamationmark.bubble.right")
         }
+    }
+    
+    private func makeShareText() -> String {
+        guard let meeting else {
+            return ""
+        }
+        
+        var returnValue = ""
+        
+        let collectionsTotalBB = collectionsQuery
+            .filter({ $0.meeting == meeting && $0.date < startDate })
+            .map { $0.amount }
+            .reduce(0, +)
+        
+        let groupConscienceTotalBB = groupConsciencePaymentsQuery
+            .filter({ $0.meeting == meeting && $0.date < startDate })
+            .map { $0.amount }
+            .reduce(0, +)
+        
+        let otherExpensesTotalBB = otherExpensesQuery
+            .filter({ $0.meeting == meeting && $0.date < startDate })
+            .map { $0.amount }
+            .reduce(0, +)
+        
+        let otherIncomeTotalBB = otherIncomesQuery
+            .filter({ $0.meeting == meeting && $0.date < startDate })
+            .map { $0.amount }
+            .reduce(0, +)
+        
+        let rentPaymentsTotalBB = rentPaymentsQuery
+            .filter({ $0.meeting == meeting && $0.date < startDate })
+            .map { $0.amount }
+            .reduce(0, +)
+        
+        let gotBB = collectionsTotalBB + otherIncomeTotalBB
+        let spentBB = rentPaymentsTotalBB + groupConscienceTotalBB + otherExpensesTotalBB
+        let startingBalance = meeting.beginningBalance + gotBB - spentBB
+        
+        let collections = collectionsQuery
+            .filter({ $0.meeting == meeting && $0.date >= startDate && $0.date <= endDate })
+        let collectionsTotal = collections
+            .map { $0.amount }
+            .reduce(0, +)
+        
+        let groupConsciencePayments = groupConsciencePaymentsQuery
+            .filter({ $0.meeting == meeting && $0.date >= startDate && $0.date <= endDate })
+        let groupConscienceTotal = groupConsciencePayments
+            .map { $0.amount }
+            .reduce(0, +)
+        
+        let otherExpenses = otherExpensesQuery
+            .filter({ $0.meeting == meeting && $0.date >= startDate && $0.date <= endDate })
+        let otherExpensesTotal = otherExpenses
+            .map { $0.amount }
+            .reduce(0, +)
+        
+        let otherIncomes = otherIncomesQuery
+            .filter({ $0.meeting == meeting && $0.date >= startDate && $0.date <= endDate })
+        let otherIncomeTotal = otherIncomes
+            .map { $0.amount }
+            .reduce(0, +)
+        
+        let rentPayments = rentPaymentsQuery
+            .filter({ $0.meeting == meeting && $0.date >= startDate && $0.date <= endDate })
+        let rentPaymentsTotal = rentPayments
+            .map { $0.amount }
+            .reduce(0, +)
+
+        let got = collectionsTotal + otherIncomeTotal
+        let spent = rentPaymentsTotal + groupConscienceTotal + otherExpensesTotal
+        let endingBalance = startingBalance + got - spent - meeting.prudentReserve
+
+        returnValue += "Treasurer's Report\n"
+        returnValue += "\(startDate.formatted()) - \(endDate.formatted())\n"
+        returnValue += "\n"
+        
+        returnValue += "Starting Cash On Hand ... \(startingBalance.formatted(.currency(code: currencyCode)))\n"
+        returnValue += "Collections ... \(collectionsTotal.formatted(.currency(code: currencyCode)))\n"
+        returnValue += "Other Income ... \(otherIncomeTotal.formatted(.currency(code: currencyCode)))\n"
+        returnValue += "Rent ... \((rentPaymentsTotal * -1).formatted(.currency(code: currencyCode)))\n"
+        returnValue += "Other Expenses ... \((otherExpensesTotal * -1).formatted(.currency(code: currencyCode)))\n"
+        returnValue += "Group Conscience ... \((groupConscienceTotal * -1).formatted(.currency(code: currencyCode)))\n"
+        returnValue += "Ending Cash On Hand ... \((endingBalance + meeting.prudentReserve).formatted(.currency(code: currencyCode)))\n"
+        returnValue += "Prudent Reserve ... \((meeting.prudentReserve * -1).formatted(.currency(code: currencyCode)))\n"
+        returnValue += "Ending Balance ... \(endingBalance.formatted(.currency(code: currencyCode)))\n"
+        returnValue += "\n"
+
+        returnValue += "Collections\n"
+        for collection in collections {
+            returnValue += "\(collection.date.formatted(date: .abbreviated, time: .omitted)) ... \(collection.amount.formatted(.currency(code: currencyCode)))\n"
+        }
+        returnValue += "\n"
+
+        returnValue += "Other Income\n"
+        for otherIncome in otherIncomes {
+            returnValue += "\(otherIncome.date.formatted(date: .abbreviated, time: .omitted)) (\(otherIncome.info)) ... \(otherIncome.amount.formatted(.currency(code: currencyCode)))\n"
+        }
+        returnValue += "\n"
+
+        returnValue += "Rent Payments\n"
+        for rentPayment in rentPayments {
+            returnValue += "\(rentPayment.date.formatted(date: .abbreviated, time: .omitted)) ... \(rentPayment.amount.formatted(.currency(code: currencyCode)))\n"
+        }
+        returnValue += "\n"
+
+        returnValue += "Other Expenses\n"
+        for otherExpense in otherExpenses {
+            returnValue += "\(otherExpense.date.formatted(date: .abbreviated, time: .omitted)) (\(otherExpense.info)) ... \(otherExpense.amount.formatted(.currency(code: currencyCode)))\n"
+        }
+        returnValue += "\n"
+
+        returnValue += "Group Conscience\n"
+        for payment in groupConsciencePayments {
+            returnValue += "\(payment.date.formatted(date: .abbreviated, time: .omitted)) (\(payment.type)) ... \(payment.amount.formatted(.currency(code: currencyCode)))\n"
+        }
+        returnValue += "\n"
+
+        returnValue += "Report generated on \(Date().formatted())\n"
+        return returnValue
     }
 }
 
