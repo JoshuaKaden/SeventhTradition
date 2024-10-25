@@ -12,7 +12,13 @@ import SwiftData
 struct SeventhTraditionApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Item.self,
+            Collection.self,
+            GroupConscienceGoal.self,
+            GroupConsciencePayment.self,
+            Meeting.self,
+            OtherExpense.self,
+            OtherIncome.self,
+            RentPayment.self
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 

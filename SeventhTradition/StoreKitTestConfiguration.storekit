@@ -1,0 +1,122 @@
+{
+  "appPolicies" : {
+    "eula" : "",
+    "policies" : [
+      {
+        "locale" : "en_US",
+        "policyText" : "",
+        "policyURL" : ""
+      }
+    ]
+  },
+  "identifier" : "A8ED9670",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "4.99",
+      "familyShareable" : false,
+      "internalID" : "8D71B346",
+      "localizations" : [
+        {
+          "description" : "Thank you very much",
+          "displayName" : "Five dollar tip",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.sweetheartsoftware.seventhtradition2024.tipFiveDollars",
+      "referenceName" : "tipFiveDollars",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "2.99",
+      "familyShareable" : false,
+      "internalID" : "5585AA6D",
+      "localizations" : [
+        {
+          "description" : "Much appreciated",
+          "displayName" : "Two dollar tip",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.sweetheartsoftware.seventhtradition2024.tipTwoDollars",
+      "referenceName" : "tipTwoDollars",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "0.99",
+      "familyShareable" : false,
+      "internalID" : "9D1D69FF",
+      "localizations" : [
+        {
+          "description" : "Thank you",
+          "displayName" : "One dollar tip",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.sweetheartsoftware.seventhtradition2024.tipOneDollar",
+      "referenceName" : "tipOneDollar",
+      "type" : "Consumable"
+    }
+  ],
+  "settings" : {
+    "_failTransactionsEnabled" : false,
+    "_locale" : "en_US",
+    "_storefront" : "USA",
+    "_storeKitErrors" : [
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Load Products"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Purchase"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Verification"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Store Sync"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Subscription Status"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Transaction"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Manage Subscriptions Sheet"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Refund Request Sheet"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Offer Code Redeem Sheet"
+      }
+    ]
+  },
+  "subscriptionGroups" : [
+
+  ],
+  "version" : {
+    "major" : 4,
+    "minor" : 0
+  }
+}
