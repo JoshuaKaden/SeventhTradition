@@ -35,7 +35,7 @@ struct AboutView: View {
             }
 
             Section("Overview") {
-                Text("7th Tradition is an app to simplify your treasury service.")
+                Text("7th Tradition is a minimalist app to simplify your treasury service.")
                     .padding(8)
                 Text("Create a meeting, with beginning balance, rent, and prudent reserve. Record collections and other income, as well as rent payments and other expenses. Set up Group Conscience goals, and optionally auto-generate payment records.")
                     .padding(8)
