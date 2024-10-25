@@ -8,12 +8,11 @@
 import SwiftUI
 
 struct AboutView: View {
-    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         Form {
             Section {
-                Text("About 7th Tradition 2024")
+                Text("About 7th Tradition")
                     .bold()
                 HStack {
                     Image("IconImageBig")
@@ -36,22 +35,22 @@ struct AboutView: View {
             }
 
             Section("Overview") {
-                Text("7th Tradition 2024 is an app to simplify your treasury service.")
+                Text("7th Tradition is an app to simplify your treasury service.")
                     .padding(8)
                 Text("Create a meeting, with beginning balance, rent, and prudent reserve. Record collections and other income, as well as rent payments and other expenses. Set up Group Conscience goals, and optionally auto-generate payment records.")
                     .padding(8)
                 Text("All data can be viewed on a treasurer's report, for any start or end date, with starting/ending balances.")
                     .padding(8)
-                Text("While specifically desiged to support the Seventh Tradition, this app is not officially endorsed by any 12-step group.")
+                Text("While specifically designed to support the Seventh Tradition, this app is not officially endorsed by any 12-step group.")
                     .padding(8)
             }
             
             Section("Technical Details") {
-                Text("7th Tradition 2024 was created by Joshua Kaden.")
+                Text("7th Tradition was created in 2024 by Joshua Kaden.")
                     .padding(8)
-                Text("The code is in Swift (SwiftUI and SwiftData), and was written using Xcode, targeting iOS 18.")
+                Text("The code uses SwiftUI and SwiftData, and is for iOS 18 (and beyond).")
                     .padding(8)
-                Text("If you're curious about the source code, feel free to have a look! The repository [is on GitHub](https://github.com/JoshuaKaden/SeventhTradition), and is named `JoshuaKaden/SeventhTradition`.")
+                Text("If you're curious about the source code, feel free to have a look! [The repository is on GitHub](https://github.com/JoshuaKaden/SeventhTradition), and is named `JoshuaKaden/SeventhTradition`.")
                     .padding(8)
             }
             

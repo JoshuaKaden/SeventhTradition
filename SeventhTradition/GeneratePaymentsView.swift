@@ -17,6 +17,8 @@ struct GeneratePaymentsView: View {
     
     @Query(sort: \GroupConscienceGoal.type) private var groupConscienceGoals: [GroupConscienceGoal]
     
+    @State private var customBalance: Double = 0
+    @State private var isEditing: Bool = false
     @State private var isPresentingConfirm = false
     
     var body: some View {
@@ -25,6 +27,7 @@ struct GeneratePaymentsView: View {
                 .navigationTitle("GC Auto Pay")
         } else {
             let treasuryBalance = meeting?.treasuryBalance ?? 0
+            let calculationBalance = customBalance == 0 ? treasuryBalance < 0 ? 0 : treasuryBalance : customBalance
             
             Form {
                 Section {
@@ -37,9 +40,43 @@ struct GeneratePaymentsView: View {
                     HStack {
                         Text("Treasury Balance")
                         Spacer()
-                        Text(treasuryBalance.formatted(.currency(code: currencyCode)))
-                            .monospaced()
+                        if customBalance <= 0 || customBalance == treasuryBalance {
+                            Text(treasuryBalance.formatted(.currency(code: currencyCode)))
+                                .monospaced()
+                                .bold()
+                        } else {
+                            Text(treasuryBalance.formatted(.currency(code: currencyCode)))
+                                .monospaced()
+                        }
                     }
+                    
+                    if isEditing {
+                        VStack(alignment: .leading) {
+                            Text("Enter a custom balance here, and it will be used to calculate percentages")
+                                .font(.footnote)
+                                .italic()
+                            TextField("", value: $customBalance, format: .number)
+#if os(iOS)
+                                .keyboardType(.decimalPad)
+#endif
+                        }
+                    } else {
+                        if customBalance > 0 && customBalance != treasuryBalance {
+                            HStack {
+                                VStack(alignment: .leading) {
+                                    Text("Custom balance")
+                                    Text("for percentage calculation")
+                                        .font(.footnote)
+                                        .italic()
+                                }
+                                Spacer()
+                                Text(customBalance.formatted(.currency(code: currencyCode)))
+                                    .monospaced()
+                                    .bold()
+                            }
+                        }
+                    }
+                    
                     Text("-- Payments to be created --")
                         .font(.footnote)
                     ForEach(groupConscienceGoals.filter({ $0.meeting == meeting })) { goal in
@@ -51,7 +88,7 @@ struct GeneratePaymentsView: View {
                             }
                             Spacer()
                             if goal.isPercent {
-                                let paymentAmount = treasuryBalance * goal.percent
+                                let paymentAmount = calculationBalance * goal.percent
                                 Text(paymentAmount.formatted(.currency(code: currencyCode)))
                                     .monospaced()
                             } else {
@@ -74,11 +111,33 @@ struct GeneratePaymentsView: View {
                         }
                     }
                     .buttonStyle(.borderless)
+                    .disabled(isEditing)
                     .padding()
                     .frame(maxWidth: .infinity)
                 }
             }
             .formStyle(.grouped)
+            .animation(nil, value: isEditing)
+            .toolbar {
+                if isEditing == true {
+                    ToolbarItem {
+                        Button(action: cancelEdits) {
+                            Text("Cancel")
+                        }
+                    }
+                    ToolbarItem {
+                        Button(action: save) {
+                            Text("Save")
+                        }
+                    }
+                } else {
+                    ToolbarItem {
+                        Button(action: toggleIsEditing) {
+                            Text("Edit")
+                        }
+                    }
+                }
+            }
             .navigationTitle("GC Auto Pay")
         }
     }
@@ -89,10 +148,13 @@ struct GeneratePaymentsView: View {
             return
         }
         
+        let treasuryBalance = meeting.treasuryBalance
+        let calculationBalance = customBalance == 0 ? treasuryBalance < 0 ? 0 : treasuryBalance : customBalance
+        
         for goal in groupConscienceGoals.filter({ $0.meeting == meeting }) {
             let paymentAmount: Double
             if goal.isPercent {
-                paymentAmount = meeting.treasuryBalance * goal.percent
+                paymentAmount = calculationBalance * goal.percent
             } else {
                 paymentAmount = goal.amount
             }
@@ -108,5 +170,25 @@ struct GeneratePaymentsView: View {
         
         try? modelContext.save()
         dismiss()
+    }
+    
+    private func cancelEdits() {
+        withAnimation {
+//            assignFromModel()
+            isEditing = false
+        }
+    }
+    
+    private func save() {
+        withAnimation {
+//            assignToModel()
+            isEditing = false
+        }
+    }
+    
+    private func toggleIsEditing() {
+        withAnimation {
+            isEditing.toggle()
+        }
     }
 }

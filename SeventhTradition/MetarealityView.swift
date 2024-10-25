@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct MetarealityView: View {
+
+    @Environment(\.dismiss) private var dismiss
+    
     var body: some View {
         Form {
             Section {
@@ -39,6 +42,13 @@ struct MetarealityView: View {
                     .padding(.bottom, 0)
                     .frame(maxWidth: .infinity)
                 }
+            }
+        }
+        .toolbar {
+            Button {
+                dismiss()
+            } label: {
+                Image(systemName: "x.circle")
             }
         }
         .navigationTitle("7th Tradition")
