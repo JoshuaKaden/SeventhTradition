@@ -19,6 +19,7 @@ struct GroupConsciencePaymentView: View {
     @State private var amount: Double = 0
     @State private var date: Date = Date()
     @State private var method: String = ""
+    @State private var type: String = ""
     @State private var who: String = ""
 
     private var hasChange: Bool {
@@ -28,6 +29,7 @@ struct GroupConsciencePaymentView: View {
         if amount != payment.amount ||
             date != payment.date ||
             method != payment.method ||
+            type != payment.type ||
             who != payment.who
         {
             return true
@@ -50,6 +52,9 @@ struct GroupConsciencePaymentView: View {
                     Section("Date") {
                         DatePicker("", selection: $date)
                     }
+                    Section("Type") {
+                        TextField("", text: $type)
+                    }
                     Section("Method") {
                         TextField("", text: $method)
                     }
@@ -67,6 +72,11 @@ struct GroupConsciencePaymentView: View {
                             Text("Amount")
                                 .font(.footnote)
                             Text(payment.amount.formatted(.currency(code: currencyCode)))
+                        }
+                        VStack(alignment: .leading) {
+                            Text("Type")
+                                .font(.footnote)
+                            Text(payment.type)
                         }
                         VStack(alignment: .leading) {
                             Text("Method")
@@ -115,6 +125,7 @@ struct GroupConsciencePaymentView: View {
             amount = payment.amount
             date = payment.date
             method = payment.method
+            type = payment.type
             who = payment.who
         }
     }
@@ -124,6 +135,7 @@ struct GroupConsciencePaymentView: View {
             payment.amount = amount
             payment.date = date
             payment.method = method
+            payment.type = type
             payment.who = who
         }
     }
