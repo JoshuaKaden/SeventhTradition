@@ -30,7 +30,7 @@
       "type" : "Consumable"
     },
     {
-      "displayPrice" : "2.99",
+      "displayPrice" : "1.99",
       "familyShareable" : false,
       "internalID" : "5585AA6D",
       "localizations" : [
