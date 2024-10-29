@@ -8,59 +8,82 @@
 import SwiftUI
 import SwiftData
 
-struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
+private struct CurrencyCodeEnvironmentKey: EnvironmentKey {
+    static let defaultValue: String = "USD"
+}
 
+extension EnvironmentValues {
+    var currencyCode: String {
+        get { self[CurrencyCodeEnvironmentKey.self] }
+        set { self[CurrencyCodeEnvironmentKey.self] = newValue }
+    }
+}
+
+private struct MeetingEnvironmentKey: EnvironmentKey {
+    static let defaultValue: Meeting? = nil
+}
+
+extension EnvironmentValues {
+    var meeting: Meeting? {
+        get { self[MeetingEnvironmentKey.self] }
+        set { self[MeetingEnvironmentKey.self] = newValue }
+    }
+}
+
+struct ContentView: View {
+    @Environment(\.locale) private var locale
+    @Environment(\.modelContext) private var modelContext
+    
+    @Query private var meetings: [Meeting]
+
+    @State private var selectedMeeting: Meeting?
+    
     var body: some View {
         NavigationSplitView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
-                    }
+            List(selection: $selectedMeeting) {
+                if meetings.isEmpty {
+                    ContentUnavailableView("Welcome to 7th Tradition", image: "IconImage64")
                 }
-                .onDelete(perform: deleteItems)
+                ForEach(meetings) { meeting in
+                    NavigationLink(meeting.name, value: meeting)
+                }
             }
 #if os(macOS)
             .navigationSplitViewColumnWidth(min: 180, ideal: 200)
 #endif
             .toolbar {
-#if os(iOS)
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-#endif
                 ToolbarItem {
                     Button(action: addItem) {
                         Label("Add Item", systemImage: "plus")
                     }
                 }
             }
+            .toolbar {
+                ToolbarItem {
+                    NavigationLink(destination: MetarealityView()) {
+                        Image(systemName: "questionmark.circle")
+                    }
+                }
+            }
         } detail: {
-            Text("Select an item")
+            NavigationStack {
+                MeetingView()
+            }
         }
+        .environment(\.currencyCode, locale.currency?.identifier ?? "USD")
+        .environment(\.meeting, selectedMeeting)
     }
 
     private func addItem() {
         withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
+            let newMeeting = Meeting(id: UUID(), name: "New Meeting")
+            modelContext.insert(newMeeting)
         }
     }
 
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
-            }
-        }
-    }
 }
 
 #Preview {
     ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
+        .modelContainer(for: Meeting.self, inMemory: true)
 }
